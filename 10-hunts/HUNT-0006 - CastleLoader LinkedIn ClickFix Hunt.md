@@ -99,7 +99,7 @@ DeviceNetworkEvents
 | project Timestamp, DeviceName, InitiatingProcessFileName,
           RemoteUrl, RemoteIP, RemotePort
 ```
-UUID-routed paths (`/<uuid>/scr7`) are a CastleLoader C2 routing convention — each victim gets a unique routing UUID.
+UUID-routed paths (`/<uuid>/scr7`) are a CastleLoader C2 routing convention; each victim gets a unique routing UUID.
 
 ### 6. Python RAT named pipe artifact
 ```kql

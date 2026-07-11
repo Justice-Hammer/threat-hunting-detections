@@ -16,9 +16,9 @@ tags: [research, pbn, seo, infrastructure, reputation-laundering, c2]
 
 ## Overview
 
-A **Private Blog Network (PBN)** is a collection of websites used to build artificial inbound backlinks to target domains — a technique originally developed for search engine ranking manipulation. Threat actors have adopted PBN backlink injection as an **infrastructure preparation technique**: pointing PBN links at newly registered C2 domains makes them appear as established, legitimate web properties to automated threat intelligence reputation feeds, web categorization engines, and domain age/activity checkers.
+A **Private Blog Network (PBN)** is a collection of websites used to build artificial inbound backlinks to target domains, a technique originally developed for search engine ranking manipulation. Threat actors have adopted PBN backlink injection as an **infrastructure preparation technique**: pointing PBN links at newly registered C2 domains makes them appear as established, legitimate web properties to automated threat intelligence reputation feeds, web categorization engines, and domain age/activity checkers.
 
-There is no current ATT&CK technique that cleanly covers this. It is closest to **T1583.001 — Acquire Infrastructure: Domains** (the operator is paying for a service that improves the standing of their domain infrastructure) but this is a stretch — T1583 covers acquisition, not subsequent reputation preparation.
+There is no current ATT&CK technique that cleanly covers this. It is closest to **T1583.001 — Acquire Infrastructure: Domains** (the operator is paying for a service that improves the standing of their domain infrastructure), but this is a stretch: T1583 covers acquisition, not subsequent reputation preparation.
 
 ## Operational mechanism
 
@@ -32,25 +32,25 @@ Reputation feeds used by security tooling (VirusTotal URL analysis, Umbrella Inv
 
 ### Commercial PBN services as cover
 The key operational detail: operators use **legitimate commercial PBN services** (with real paying customers, invoicing, and published rate cards), not self-operated blog farms. This means:
-- The PBN network itself is not threat-actor-controlled infrastructure — blocking it disrupts hundreds of legitimate clients.
+- The PBN network itself is not threat-actor-controlled infrastructure; blocking it disrupts hundreds of legitimate clients.
 - Link-graph analysis between the PBN nodes and the C2 domains does not imply a single-operator relationship. The C2 domains are merely clients among many.
-- Attribution via PBN link graph is not reliable — it identifies the vendor, not the threat actor.
+- Attribution via PBN link graph is not reliable: it identifies the vendor, not the threat actor.
 
 ## Detection / hunting implications
 
 ### What NOT to do
 - Do not treat shared PBN hosting IPs as threat-actor infrastructure. Co-tenants are unrelated legitimate businesses.
-- Do not use inbound PBN links as the primary IOC for a C2 domain — the same PBN may link to both the C2 domain and hundreds of unrelated sites.
+- Do not use inbound PBN links as the primary IOC for a C2 domain; the same PBN may link to both the C2 domain and hundreds of unrelated sites.
 
 ### What works
-1. **Backlink anomaly at registration time**: newly registered domains (< 30 days) with unusual inbound link counts for their content category. Most newly registered C2 domains have content-free landing pages or parked pages, which should not attract organic backlinks — artificial link injection creates a detectable anomaly.
+1. **Backlink anomaly at registration time**: newly registered domains (< 30 days) with unusual inbound link counts for their content category. Most newly registered C2 domains have content-free landing pages or parked pages, which should not attract organic backlinks, so artificial link injection creates a detectable anomaly.
 
 2. **Link source clustering**: if multiple C2 domains from the same campaign receive backlinks from the same PBN source domains in the same time window, that is a campaign-level signal even if the individual C2 domains look legitimate in isolation.
 
 3. **Reputation feed cross-validation**: do not rely on a single feed (VirusTotal, Umbrella) for C2 domain scoring. Use behavioral signals (beacon timing, JA3/JARM, port/protocol combination) alongside reputation; PBN injection specifically targets automated reputation feeds.
 
 ## Relationship to SEO poisoning (T1608.006)
-PBN link injection for C2 domain reputation laundering is **not** the same as SEO poisoning (T1608.006), which aims to rank attacker-controlled pages in search results to deliver malware to users searching for legitimate software. The PBN technique here is infrastructure hardening, not victim delivery — the goal is to improve C2 domain standing in threat-intel and proxy scoring systems, not in Google search rankings. Both techniques use PBN infrastructure but for different purposes.
+PBN link injection for C2 domain reputation laundering is **not** the same as SEO poisoning (T1608.006), which aims to rank attacker-controlled pages in search results to deliver malware to users searching for legitimate software. The PBN technique here is infrastructure hardening, not victim delivery; the goal is to improve C2 domain standing in threat-intel and proxy scoring systems, not in Google search rankings. Both techniques use PBN infrastructure but for different purposes.
 
 ## References
 - https://attack.mitre.org/techniques/T1583/001/

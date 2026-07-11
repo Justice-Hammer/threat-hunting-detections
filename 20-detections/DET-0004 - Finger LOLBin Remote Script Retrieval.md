@@ -22,7 +22,7 @@ tags: [detection, lolbin, finger, execution, living-off-the-land]
 # Finger LOLBin Remote Script Retrieval
 
 ## Logic summary
-`finger.exe` is a legacy Windows binary (present by default on all Windows versions) that implements the Finger protocol (TCP/79). Adversaries abuse it as a LOLBin to retrieve attacker-controlled content from a Finger server: the `.plan` field of a Finger response can carry arbitrary text — including multi-line batch scripts — and the output is captured directly in a command substitution (`for /f ... finger user@host`). This allows script retrieval without `curl`, `wget`, or PowerShell web requests, bypassing controls that monitor those specific download tools.
+`finger.exe` is a legacy Windows binary (present by default on all Windows versions) that implements the Finger protocol (TCP/79). Adversaries abuse it as a LOLBin to retrieve attacker-controlled content from a Finger server: the `.plan` field of a Finger response can carry arbitrary text (including multi-line batch scripts), and the output is captured directly in a command substitution (`for /f ... finger user@host`). This allows script retrieval without `curl`, `wget`, or PowerShell web requests, bypassing controls that monitor those specific download tools.
 
 Legitimate enterprise use of `finger.exe` is effectively zero in modern environments. Any execution should be treated as high-confidence malicious.
 

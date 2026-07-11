@@ -15,11 +15,11 @@ tags: [research, clickfix, lure-kit, social-engineering, react]
 # ClickFix Google CAPTCHA Lure Kit — Technical Analysis
 
 **Evidence basis:** Static analysis of a React SPA bundle served by a live ClickFix lure site.
-**Confidence:** High — source code confirmed.
+**Confidence:** High (source code confirmed).
 
 ## Kit overview
 
-A **React single-page application impersonating a Google "Unusual traffic from your computer network" Security Check.** This variant is a discriminator: most ClickFix actors clone Cloudflare Turnstile; this kit uses the Google CAPTCHA theme instead.
+The lure is a React single-page application impersonating a Google "Unusual traffic from your computer network" security check. This variant is a discriminator: most ClickFix actors clone Cloudflare Turnstile; this kit uses the Google CAPTCHA theme instead.
 
 Social-engineering flow: victim is prompted to press **Win + R → Ctrl + V → Enter** to paste and execute a clipboard payload via the Windows Run dialog.
 
@@ -58,13 +58,13 @@ These artifacts are consistent across builds from the same kit and survive opera
 ## Detection surface
 
 1. **DOM/JS inspection:** `GOO-FAB`/`61Z-PAB` token literals in page source. Visible only in non-cloaked responses.
-2. **Proxy URL pattern:** React SPA bundles served from domains matching keyboard-mash naming patterns — very low legitimate-content prior.
+2. **Proxy URL pattern:** React SPA bundles served from domains matching keyboard-mash naming patterns: very low legitimate-content prior.
 3. **Clipboard telemetry:** EDR clipboard-write events from a browser process followed immediately by a Run-dialog `powershell.exe` spawn.
-4. **Process lineage:** `explorer.exe` (Run dialog) → `powershell.exe` with `irm`+`iex` in command line — see [[DET-0002 - ClickFix PowerShell IRM Execution]].
+4. **Process lineage:** `explorer.exe` (Run dialog) → `powershell.exe` with `irm`+`iex` in command line; see [[DET-0002 - ClickFix PowerShell IRM Execution]].
 
 ## Delivery architecture note
 
-This lure kit is designed for centralized deployment: a single operator-controlled hub serves the React SPA to many compromised delivery sites simultaneously. The hub uses server-side session control to rotate payloads and revoke access — meaning the clipboard payload URL observed in any single sample may no longer be active. Hunt on behavioral signals (process lineage), not on IOC-specific URLs.
+This lure kit is designed for centralized deployment: a single operator-controlled hub serves the React SPA to many compromised delivery sites simultaneously. The hub uses server-side session control to rotate payloads and revoke access. The clipboard payload URL observed in any single sample may no longer be active. Hunt on behavioral signals (process lineage), not on IOC-specific URLs.
 
 ## References
 - https://attack.mitre.org/techniques/T1204/001/

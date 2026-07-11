@@ -22,7 +22,7 @@ tags: [detection, clickfix, powershell, execution]
 # ClickFix PowerShell IRM Execution
 
 ## Logic summary
-ClickFix social engineering lures instruct victims to paste a PowerShell one-liner into the Run dialog or a terminal. The canonical payload combines `Invoke-RestMethod` (`irm`) to fetch a remote script and `Invoke-Expression` (`iex`) to execute it in-memory — bypassing file-based AV at the download stage. This detection flags the `iex(irm ...)` pattern in process command-line telemetry. Benign volume for this combination is near-zero in standard enterprise environments; the pattern is almost exclusively associated with malicious loaders.
+ClickFix social engineering lures instruct victims to paste a PowerShell one-liner into the Run dialog or a terminal. The canonical payload combines `Invoke-RestMethod` (`irm`) to fetch a remote script and `Invoke-Expression` (`iex`) to execute it in-memory, bypassing file-based AV at the download stage. This detection flags the `iex(irm ...)` pattern in process command-line telemetry. Benign volume for this combination is near-zero in standard enterprise environments; the pattern is almost exclusively associated with malicious loaders.
 
 Validated against real-world ClickFix campaigns (EVALUSION/UNC2190 cluster) delivering NetSupport RAT.
 
@@ -110,7 +110,7 @@ DeviceProcessEvents
 
 ## False positives
 - Legitimate `irm`+`iex` usage in admin bootstrap scripts (PSGallery module install, winget wrappers, internal tooling).
-- Tune by filtering on `InitiatingProcessFileName` — legitimate admin usage typically parents from `svchost.exe` or a scheduled task; ClickFix targets user-initiated sessions parented from `explorer.exe` or a browser.
+- Tune by filtering on `InitiatingProcessFileName`: legitimate admin usage typically parents from `svchost.exe` or a scheduled task; ClickFix targets user-initiated sessions parented from `explorer.exe` or a browser.
 - Scope to non-privileged accounts to reduce admin noise without losing the signal.
 
 ## Validation notes

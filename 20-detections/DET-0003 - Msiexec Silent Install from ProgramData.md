@@ -22,9 +22,9 @@ tags: [detection, msiexec, lolbin, programdata, defense-evasion]
 # Msiexec Silent Install from ProgramData
 
 ## Logic summary
-`msiexec.exe` is a Microsoft-signed binary routinely abused as a LOLBin to silently install malicious payloads (T1218.007). Adversaries pass `/qn` (quiet, no UI) and `/norestart` to suppress all user-visible prompts, then stage the MSI in `C:\ProgramData\` — a user-writable directory that doesn't require elevation and is less monitored than `C:\Windows\` or `C:\Program Files\`. Randomized subfolder names under `ProgramData` are used to frustrate path-based detection.
+`msiexec.exe` is a Microsoft-signed binary routinely abused as a LOLBin to silently install malicious payloads (T1218.007). Adversaries pass `/qn` (quiet, no UI) and `/norestart` to suppress all user-visible prompts, then stage the MSI in `C:\ProgramData\`, a user-writable directory that doesn't require elevation and is less monitored than `C:\Windows\` or `C:\Program Files\`. Randomized subfolder names under `ProgramData` are used to frustrate path-based detection.
 
-Legitimate enterprise MSI deployments (SCCM, Intune, vendor installers) typically invoke `msiexec` from `C:\Windows\Installer\`, a UNC path, or an elevated service context — not from a user-writable `ProgramData` subfolder. False-positive volume is low.
+Legitimate enterprise MSI deployments (SCCM, Intune, vendor installers) typically invoke `msiexec` from `C:\Windows\Installer\`, a UNC path, or an elevated service context. They don't stage to user-writable `ProgramData` subfolders. False-positive volume is low.
 
 Validated against real-world EVALUSION/UNC2190 ClickFix campaigns where this pattern was used to drop NetSupport RAT.
 
@@ -110,11 +110,11 @@ DeviceProcessEvents
 ```
 
 ## False positives
-- Enterprise MDM/SCCM deployments that cache MSIs to ProgramData subfolders — profile your environment's managed-deployment parent chains and add them to the filter.
+- Enterprise MDM/SCCM deployments that cache MSIs to ProgramData subfolders: profile your environment's managed-deployment parent chains and add them to the filter.
 - Vendor software (e.g., some security tools) that legitimately stage updates under ProgramData; verify by checking the parent process signature and the MSI signing chain.
 
 ## Validation notes
-Validated against observed EVALUSION/UNC2190 dropper chain: `powershell iex(irm)` → `msiexec.exe /qn /norestart C:\ProgramData\<random>\<payload>.msi`. Subfolder names under ProgramData were randomized per delivery wave, confirming path-based rules alone are insufficient — the `/qn` + `ProgramData` combination is the durable signal. Benign volume near-zero when the managed-deployment parent filter is applied.
+Validated against observed EVALUSION/UNC2190 dropper chain: `powershell iex(irm)` → `msiexec.exe /qn /norestart C:\ProgramData\<random>\<payload>.msi`. Subfolder names under ProgramData were randomized per delivery wave, confirming path-based rules alone are insufficient: the `/qn` + `ProgramData` combination is the durable signal. Benign volume near-zero when the managed-deployment parent filter is applied.
 
 ## References
 - https://attack.mitre.org/techniques/T1218/007/

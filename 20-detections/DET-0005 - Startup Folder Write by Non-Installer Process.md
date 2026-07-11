@@ -23,7 +23,7 @@ tags: [detection, persistence, startup-folder, t1547]
 # Startup Folder Write by Non-Installer Process
 
 ## Logic summary
-The Windows Startup folder (`%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\` and the all-users variant) causes any executable or shortcut placed there to run automatically at user logon — without requiring admin privileges or registry modifications. Multiple threat actors use this as a first-choice persistence mechanism because it is user-writable and does not trigger UAC.
+The Windows Startup folder (`%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\` and the all-users variant) causes any executable or shortcut placed there to run automatically at user logon, without admin privileges or registry modifications. Multiple threat actors use this as a first-choice persistence mechanism because it is user-writable and does not trigger UAC.
 
 Legitimate writes to the Startup folder come from managed software installers running as `SYSTEM` or `TrustedInstaller`, signed by known publishers, or from explicit user action via Explorer. Writes initiated by `msiexec.exe`, `powershell.exe`, `cmd.exe`, or `python.exe` executing an adversary payload are high-confidence malicious. The parent process chain narrows this further.
 
