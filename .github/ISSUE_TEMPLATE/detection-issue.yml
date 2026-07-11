@@ -1,0 +1,45 @@
+name: Detection issue / false positive
+description: Report a rule that misfires, misses, or has an off translation for your platform
+title: "[DET-XXXX] <short summary>"
+labels: ["detection"]
+body:
+  - type: input
+    id: rule
+    attributes:
+      label: Rule
+      description: Which detection (e.g. DET-0004) and which platform translation?
+      placeholder: "DET-0004 — Splunk SPL"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of issue
+      options:
+        - False positive (fires on benign activity)
+        - False negative (misses the technique)
+        - Translation error (query wrong for a platform)
+        - Field / taxonomy mismatch
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What happened, expected behavior, and the log/telemetry shape involved.
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Sanitized sample event (optional)
+      description: A redacted event that reproduces it. Remove all client/host/user identifiers and defang IOCs.
+      render: json
+  - type: checkboxes
+    id: hygiene
+    attributes:
+      label: Data hygiene
+      options:
+        - label: This report contains no client, victim, or case-identifying data, and IOCs are defanged.
+          required: true

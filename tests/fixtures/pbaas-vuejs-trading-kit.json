@@ -1,0 +1,26 @@
+{
+  "detection": "DET-0006",
+  "logsource": {
+    "category": "proxy"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "cs-method": "GET",
+      "cs-host": "brightwealth-invest.vip",
+      "c-uri": "/prod-api/account/balance"
+    },
+    {
+      "_expect": "fire",
+      "cs-method": "GET",
+      "cs-host": "wss.brightwealth-node.top",
+      "c-uri": "/socket/1"
+    },
+    {
+      "_expect": "quiet",
+      "cs-method": "GET",
+      "cs-host": "api.example.com",
+      "c-uri": "/prod-api/health"
+    }
+  ]
+}

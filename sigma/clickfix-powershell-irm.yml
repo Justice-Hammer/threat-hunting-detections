@@ -1,0 +1,39 @@
+title: ClickFix PowerShell IRM Execution
+id: 8171b3c4-8e4a-4f78-ade7-3a0698cda3f3
+status: test
+author: Justice Hammer
+date: 2026-07-11
+description: >
+  Detects PowerShell combining Invoke-RestMethod (irm) and Invoke-Expression (iex)
+  to download and execute a remote payload in-memory — the canonical ClickFix
+  one-liner delivery pattern.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_proc:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  selection_cmd:
+    CommandLine|contains|all:
+      - 'irm '
+      - 'iex'
+  selection_cmd_alt:
+    CommandLine|contains|all:
+      - 'Invoke-RestMethod'
+      - 'Invoke-Expression'
+  selection_url:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+  condition: selection_proc and (selection_cmd or selection_cmd_alt) and selection_url
+falsepositives:
+  - Legitimate admin scripts fetching and executing from PSGallery or winget wrappers
+  - Scope to non-admin accounts or filter on parent process (explorer.exe, browser) to target user-initiated execution
+level: high
+tags:
+  - attack.execution
+  - attack.initial_access
+  - attack.t1059.001
+  - attack.t1204.001

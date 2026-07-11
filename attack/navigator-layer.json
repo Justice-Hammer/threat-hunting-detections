@@ -1,0 +1,134 @@
+{
+  "name": "threat-hunting-detections coverage",
+  "versions": {
+    "attack": "15",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "ATT&CK techniques covered by the detections, hunts, and research in this repo. Score = number of artifacts referencing the technique. Generated from the page frontmatter.",
+  "sorting": 0,
+  "hideDisabled": true,
+  "techniques": [
+    {
+      "techniqueID": "T1059.001",
+      "score": 3,
+      "comment": "Covered by: DET-0002, HUNT-0005, RES-0004",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.003",
+      "score": 1,
+      "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.006",
+      "score": 1,
+      "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.001",
+      "score": 1,
+      "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1105",
+      "score": 1,
+      "comment": "Covered by: DET-0004",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1132",
+      "score": 1,
+      "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1204.001",
+      "score": 4,
+      "comment": "Covered by: DET-0002, HUNT-0005, HUNT-0006, RES-0004",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1218",
+      "score": 2,
+      "comment": "Covered by: DET-0004, HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1218.007",
+      "score": 2,
+      "comment": "Covered by: DET-0003, HUNT-0005",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1530",
+      "score": 2,
+      "comment": "Covered by: HUNT-0007, RES-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1547.001",
+      "score": 2,
+      "comment": "Covered by: DET-0005, HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1562.001",
+      "score": 1,
+      "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1573.001",
+      "score": 1,
+      "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1583.001",
+      "score": 5,
+      "comment": "Covered by: DET-0006, HUNT-0005, HUNT-0007, RES-0005, RES-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1583.006",
+      "score": 2,
+      "comment": "Covered by: HUNT-0007, RES-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1584.004",
+      "score": 1,
+      "comment": "Covered by: HUNT-0005",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1608.005",
+      "score": 3,
+      "comment": "Covered by: DET-0006, HUNT-0007, RES-0006",
+      "enabled": true
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#d7ecffff",
+      "#1f6febff"
+    ],
+    "minValue": 1,
+    "maxValue": 5
+  },
+  "legendItems": [],
+  "metadata": [
+    {
+      "name": "artifacts",
+      "value": "5 detections, 3 hunts, 3 research notes"
+    }
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#205b93",
+  "selectTechniquesAcrossTactics": true
+}

@@ -1,0 +1,35 @@
+title: Msiexec Silent Install from ProgramData
+id: df1fcd6b-9582-462d-bc85-584f06b5b695
+status: test
+author: Justice Hammer
+date: 2026-07-11
+description: >
+  Detects msiexec.exe silently installing an MSI from a user-writable C:\ProgramData\
+  subdirectory. Legitimate enterprise deployments use Windows Installer paths or UNC
+  sources; ProgramData staging is strongly associated with malicious dropper chains.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\msiexec.exe'
+    CommandLine|contains:
+      - '/qn'
+    CommandLine|re: '(?i)C:\\ProgramData\\.+'
+  filter_managed:
+    ParentImage|endswith:
+      - '\svchost.exe'
+      - '\services.exe'
+    CommandLine|contains:
+      - '\Windows\Installer\'
+  condition: selection and not filter_managed
+falsepositives:
+  - Enterprise deployment tools (SCCM, Intune) staging to ProgramData — baseline
+    known-good paths per environment
+  - Vendor installers that legitimately drop to ProgramData (less common; verify with
+    signed parent chain)
+level: high
+tags:
+  - attack.defense_evasion
+  - attack.execution
+  - attack.t1218.007

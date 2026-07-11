@@ -1,0 +1,21 @@
+{
+  "detection": "DET-0003",
+  "logsource": {
+    "category": "process_creation",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\msiexec.exe",
+      "ParentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "CommandLine": "msiexec /qn /norestart C:\\ProgramData\\a8f3c1\\update.msi"
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\System32\\msiexec.exe",
+      "ParentImage": "C:\\Windows\\System32\\svchost.exe",
+      "CommandLine": "msiexec /i C:\\Windows\\Installer\\1a2b3c.msi /qn"
+    }
+  ]
+}

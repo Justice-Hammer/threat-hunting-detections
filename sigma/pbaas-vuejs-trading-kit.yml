@@ -1,0 +1,31 @@
+title: Pig-Butchering Platform Kit Component Fingerprint
+id: 22c2e0ca-1923-4aa3-b4a1-0bee18cf8eb3
+status: test
+author: Justice Hammer
+date: 2026-07-11
+description: >
+  Detects web proxy requests to pig-butchering-as-a-service fake trading platforms
+  by their URL-observable backend conventions: the /prod-api/ REST prefix and the
+  /socket/1 WebSocket path, on the .vip/.top TLDs these kits favour. The Vue.js
+  component vocabulary that survives operator rebranding lives in the served JS
+  bundle body, not the request URL — match that with the companion YARA rule below,
+  which requires a proxy that logs response content.
+logsource:
+  category: proxy
+detection:
+  selection_host:
+    cs-host|endswith:
+      - '.vip'
+      - '.top'
+  selection_uri:
+    c-uri|contains:
+      - '/prod-api/'
+      - '/socket/1'
+  condition: selection_host and selection_uri
+falsepositives:
+  - Legitimate services on .vip/.top TLDs that expose a /prod-api/ path (rare; corroborate with the JS bundle content fingerprint / YARA rule below before escalating)
+level: high
+tags:
+  - attack.resource_development
+  - attack.t1583.001
+  - attack.t1608.005

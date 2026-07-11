@@ -1,0 +1,19 @@
+{
+  "detection": "DET-0005",
+  "logsource": {
+    "category": "file_event",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\ProgramData\\CrewlCorpii\\pythonw.exe",
+      "TargetFilename": "C:\\Users\\v\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\watchdog.py"
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\servicing\\TrustedInstaller.exe",
+      "TargetFilename": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\OneDrive.lnk"
+    }
+  ]
+}

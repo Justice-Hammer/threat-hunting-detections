@@ -1,0 +1,26 @@
+title: Finger LOLBin Remote Script Retrieval
+id: 1e1f2a5a-dfbc-4ad3-8d62-034e31a1eb22
+status: test
+author: Justice Hammer
+date: 2026-07-11
+description: >
+  Detects finger.exe execution with a remote host argument — a LOLBin technique for
+  retrieving attacker-controlled scripts via the Finger protocol (TCP/79) without
+  using standard download utilities. Legitimate enterprise use is near-zero.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\finger.exe'
+    CommandLine|contains: '@'
+  condition: selection
+falsepositives:
+  - Legacy network administration in environments that still use Finger protocol
+    (extremely rare; validate by confirming outbound TCP/79 policy and target host)
+level: high
+tags:
+  - attack.execution
+  - attack.command_and_control
+  - attack.t1218
+  - attack.t1105

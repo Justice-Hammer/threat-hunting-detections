@@ -1,0 +1,44 @@
+title: Startup Folder Write by Non-Installer Process
+id: 023e1bee-e0a6-4b1d-81d4-470262cb534a
+status: test
+author: Justice Hammer
+date: 2026-07-11
+description: >
+  Detects file creation events in Windows Startup folder locations initiated by
+  processes associated with malicious delivery chains (msiexec, powershell, cmd,
+  python, wscript, cscript). Legitimate installers running as SYSTEM or
+  TrustedInstaller are filtered; scripting engines and LOLBins writing to Startup
+  are high-confidence persistence indicators.
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection_path:
+    TargetFilename|contains:
+      - '\Start Menu\Programs\Startup\'
+  selection_initiator:
+    Image|endswith:
+      - '\msiexec.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\cmd.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\python.exe'
+      - '\pythonw.exe'
+      - '\curl.exe'
+      - '\certutil.exe'
+  filter_system_installer:
+    Image|endswith:
+      - '\TrustedInstaller.exe'
+      - '\svchost.exe'
+      - '\explorer.exe'
+  condition: selection_path and selection_initiator and not filter_system_installer
+falsepositives:
+  - Enterprise software that legitimately installs Startup items via script
+    (baseline known-good installer names/paths per environment)
+  - Package managers (chocolatey, winget) — add to filter if present
+level: high
+tags:
+  - attack.persistence
+  - attack.t1547.001

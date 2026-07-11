@@ -1,0 +1,38 @@
+name: validate
+
+on:
+  push:
+    paths:
+      - 'sigma/**'
+      - 'tools/**'
+      - 'scripts/**'
+      - '.github/workflows/sigma-validate.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sigma:
+    name: Sigma rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install validators
+        run: pip install pyyaml sigma-cli
+      - name: Offline structural gate
+        run: python3 tools/validate-sigma.py
+      - name: pySigma schema + best-practice check
+        run: sigma check sigma/
+
+  scripts:
+    name: Python scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Byte-compile
+        run: python3 -m compileall -q scripts tools

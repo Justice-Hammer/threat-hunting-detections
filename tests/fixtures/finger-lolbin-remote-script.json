@@ -1,0 +1,21 @@
+{
+  "detection": "DET-0004",
+  "logsource": {
+    "category": "process_creation",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\finger.exe",
+      "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+      "CommandLine": "finger jobseeker@finger.indeed-careers.test"
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\System32\\ping.exe",
+      "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+      "CommandLine": "ping -n 4 example.com"
+    }
+  ]
+}
