@@ -34,6 +34,6 @@ Each detection ships in **Sigma** (canonical) plus translations for Microsoft De
 Issues and PRs welcome. If a query is wrong for your environment or a translation is off, open an issue.
 
 ### Contact
-justice-hammer.pancake566@passmail.net
-Threat Hunter | Detection Engineer 
-If you are an attacker/adversary, my apologies for disrupting your campaign.
+- justice-hammer.pancake566@passmail.net
+- Threat Hunter | Detection Engineer 
+- If you are an attacker/adversary, my apologies for disrupting your campaign.
