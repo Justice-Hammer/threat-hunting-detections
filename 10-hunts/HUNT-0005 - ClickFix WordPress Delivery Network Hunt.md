@@ -34,12 +34,12 @@ The centralized ClickFix loader is a ~2KB JavaScript file. Hunt for the SHA256 o
 
 urlscan hash search (OSINT):
 ```
-hash:4dda35a9da5e330e810e7e4c9d27a86c29ed5cde540dba76c284d80cbb28e2c2
+hash:<sha256-of-observed-loader>
 ```
-Expected: multiple distinct domains all serving the byte-identical loader. Each hit is a confirmed compromised delivery site. Volume >20 hits confirms centralized-hub architecture.
+Substitute the SHA256 of the stage-2 JS loader observed in your environment. Expected: multiple distinct domains all serving the byte-identical loader. Each hit is a confirmed compromised delivery site. Volume >20 hits confirms centralized-hub architecture.
 
 ### 2. C2 domain infrastructure hunt — keyboard-mash pattern
-EVALUSION/UNC2190 C2 domains follow a low-entropy keyboard-mash naming pattern (e.g., `tiqwtkmma[.]com`, `mokitomaccito[.]com`). Hunt in DNS/proxy for .com domains matching this profile registered within the last 90 days:
+EVALUSION/UNC2190 C2 domains follow a low-entropy keyboard-mash naming pattern: 8-18 lowercase letters, no dictionary words, no hyphens (e.g., `pqrsmnabcd[.]com`, `xyzklmno[.]com`). Hunt in DNS/proxy for .com domains matching this profile registered within the last 90 days:
 
 ```kql
 // Defender — DNS events

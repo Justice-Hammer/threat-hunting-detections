@@ -93,11 +93,10 @@ DeviceProcessEvents
 ## Network companion rule
 Pair with a network alert for outbound TCP/79 from any workstation:
 ```kql
-// Defender network events
+// Defender network events — alert on ALL outbound TCP/79
+// Finger protocol has no legitimate enterprise use; any process making this connection is suspicious
 DeviceNetworkEvents
 | where RemotePort == 79
-| where InitiatingProcessFileName !in~ ("finger.exe")  // catch non-finger TCP/79
-    or InitiatingProcessFileName =~ "finger.exe"       // or catch finger itself
 | project Timestamp, DeviceName, InitiatingProcessFileName,
           RemoteIP, RemotePort, RemoteUrl
 ```
