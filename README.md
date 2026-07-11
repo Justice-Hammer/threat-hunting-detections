@@ -6,7 +6,7 @@ Production-grade detections, hunt playbooks, and research notes from real-world 
 
 ## About
 
-I'm a threat hunter and incident responder. This repo is where I publish finished work: detections that fired on real intrusions, hunt playbooks built around actual adversary behavior, and research notes on attack techniques I've had to understand deeply enough to detect.
+I'm a threat hunter and incident responder. This repo is where I publish finished work: detections that fired on real intrusions, hunt playbooks built around actual adversary behavior, and research notes on attack techniques I've had to understand deeply enough to detect. I am experimenting with Claude Code (specifically claude-obsidian) to collect public threat intel. All collected data is analyzed by me (a human). 
 
 Everything here started as internal case work. Cases are scrubbed before publishing: no client names, no victim identifiers, no proprietary context. What remains is the tradecraft: the detection logic, the hunt queries, the TTP analysis (which I think is more useful to the community than case details anyway).
 
