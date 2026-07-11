@@ -5,7 +5,7 @@ type: detection
 status: validated
 confidence: high
 attack_tactics: [execution, command-and-control]
-attack_techniques: [T1218]
+attack_techniques: [T1218, T1105]
 platforms: [sigma, elastic, splunk, kql, crowdstrike]
 data_sources: [process_creation, network_connection]
 lolbin: [finger.exe]
@@ -13,6 +13,7 @@ false_positive_rate: very-low
 related_hunts: ["[[HUNT-0006 - CastleLoader LinkedIn ClickFix Hunt]]"]
 references:
   - "https://attack.mitre.org/techniques/T1218/"
+  - "https://attack.mitre.org/techniques/T1105/"
   - "https://lolbas-project.github.io/lolbas/Binaries/Finger/"
 created: 2026-07-11
 updated: 2026-07-11
@@ -31,8 +32,10 @@ Validated against real-world CastleLoader delivery chains where `finger.exe` ret
 ## Sigma (canonical)
 ```yaml
 title: Finger LOLBin Remote Script Retrieval
-id: 7c4b2e1a-9f3d-4a8c-b240-1e7f3c90d3b2
-status: experimental
+id: 1e1f2a5a-dfbc-4ad3-8d62-034e31a1eb22
+status: test
+author: Justice Hammer
+date: 2026-07-11
 description: >
   Detects finger.exe execution with a remote host argument — a LOLBin technique for
   retrieving attacker-controlled scripts via the Finger protocol (TCP/79) without
@@ -51,7 +54,9 @@ falsepositives:
 level: high
 tags:
   - attack.execution
+  - attack.command_and_control
   - attack.t1218
+  - attack.t1105
 ```
 
 ## Platform translations
@@ -102,11 +107,15 @@ DeviceNetworkEvents
 ```
 
 ## Attack chain context
-In observed campaigns, `finger.exe` is invoked from a caret-obfuscated `cmd.exe` one-liner (ClickFix clipboard payload). The Finger response `.plan` field carries a multi-line batch script, captured with `for /f "delims=" %i in ('finger user@host') do ...`. The batch script then downloads a Python embeddable disguised as a `.pdf`, extracts it, renames the binary, and executes the next stage. See [[HUNT-0006 - CastleLoader LinkedIn ClickFix Hunt]] for the full chain.
+In observed campaigns, `finger.exe` is invoked from a caret-obfuscated `cmd.exe` one-liner (ClickFix clipboard payload). The Finger response `.plan` field carries a multi-line batch script, captured with `for /f "delims=" %i in ('finger user@host') do ...`. The batch script then downloads a Python embeddable disguised as a `.pdf`, extracts it, renames the binary, and executes the next stage. See [HUNT-0006 - CastleLoader LinkedIn ClickFix Hunt](../10-hunts/HUNT-0006%20-%20CastleLoader%20LinkedIn%20ClickFix%20Hunt.md) for the full chain.
 
 ## False positives
 Legitimate Finger protocol usage is functionally extinct in enterprise environments. If your environment has a documented Finger use case, baseline the specific binary paths and target hosts and filter accordingly. All other executions should be escalated immediately.
 
+## Lab validation
+Reproduce safely with Atomic Red Team [T1105](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1105/T1105.md) (finger.exe ingress tool transfer) against a lab Finger listener. Fixtures: [`tests/fixtures/finger-lolbin-remote-script.json`](../tests/fixtures/finger-lolbin-remote-script.json).
+
 ## References
 - https://attack.mitre.org/techniques/T1218/
+- https://attack.mitre.org/techniques/T1105/
 - https://lolbas-project.github.io/lolbas/Binaries/Finger/

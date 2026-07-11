@@ -29,8 +29,10 @@ Validated against real-world ClickFix campaigns (EVALUSION/UNC2190 cluster) deli
 ## Sigma (canonical)
 ```yaml
 title: ClickFix PowerShell IRM Execution
-id: 8e3b1c2a-4f7d-4e8b-a021-6c9e3b12c1f5
-status: experimental
+id: 8171b3c4-8e4a-4f78-ade7-3a0698cda3f3
+status: test
+author: Justice Hammer
+date: 2026-07-11
 description: >
   Detects PowerShell combining Invoke-RestMethod (irm) and Invoke-Expression (iex)
   to download and execute a remote payload in-memory — the canonical ClickFix

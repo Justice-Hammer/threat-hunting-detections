@@ -34,42 +34,42 @@ Validated against a live PBaaS platform impersonating multiple financial service
 
 This kit targets humans via social engineering, not endpoint malware delivery. Detection is in network telemetry, not process creation.
 
-| Surface | Signal |
-|---|---|
-| Web proxy (URL) | Requests to `.vip`/`.top` domains matching SPA bundle path patterns |
-| Web proxy (content) | Page source containing `useToRecharge`, `useToWithdraw`, `NoticeModal` |
-| DNS | Resolution of `wss.*` subdomain on `.top` TLD immediately following `.vip` domain resolution |
-| Network | WebSocket connection to `wss://<domain>/socket/1` from browser process |
+| Surface | Signal | Where it's observable |
+|---|---|---|
+| Web proxy (URL) | `/prod-api/` and `/socket/1` paths on `.vip`/`.top` domains | Request URL — any proxy |
+| Web proxy / file (content) | JS bundle body containing `useToRecharge`, `useToWithdraw`, `NoticeModal` | Response **body** — needs a content-inspecting proxy or the YARA rule below |
+| DNS | Resolution of `wss.*` subdomain on `.top` TLD immediately following `.vip` domain resolution | DNS telemetry |
+| Network | WebSocket connection to `wss://<domain>/socket/1` from browser process | Network / browser telemetry |
 
 ## Sigma (canonical)
 
 ```yaml
 title: Pig-Butchering Platform Kit Component Fingerprint
-id: 3f8c1e2a-6b4d-4c9a-d451-3a9f5e02c5b4
-status: experimental
+id: 22c2e0ca-1923-4aa3-b4a1-0bee18cf8eb3
+status: test
+author: Justice Hammer
+date: 2026-07-11
 description: >
-  Detects web proxy content inspection hits for Vue.js fake trading platform
-  component vocabulary associated with pig-butchering-as-a-service kits.
-  Component names survive operator rebranding and are consistent across deployments.
+  Detects web proxy requests to pig-butchering-as-a-service fake trading platforms
+  by their URL-observable backend conventions: the /prod-api/ REST prefix and the
+  /socket/1 WebSocket path, on the .vip/.top TLDs these kits favour. The Vue.js
+  component vocabulary that survives operator rebranding lives in the served JS
+  bundle body, not the request URL — match that with the companion YARA rule below,
+  which requires a proxy that logs response content.
 logsource:
   category: proxy
-  product: windows
 detection:
-  selection_content:
-    cs-method: GET
-    c-uri-extension: js
-    c-uri|contains:
-      - 'useToRecharge'
-      - 'useToWithdraw'
-      - 'NoticeModal'
-  selection_api:
-    c-uri|contains: '/prod-api/'
+  selection_host:
     cs-host|endswith:
       - '.vip'
       - '.top'
-  condition: selection_content or selection_api
+  selection_uri:
+    c-uri|contains:
+      - '/prod-api/'
+      - '/socket/1'
+  condition: selection_host and selection_uri
 falsepositives:
-  - Legitimate Vue.js applications that happen to use matching variable names (unlikely at cluster level)
+  - Legitimate services on .vip/.top TLDs that expose a /prod-api/ path (rare; corroborate with the JS bundle content fingerprint / YARA rule below before escalating)
 level: high
 tags:
   - attack.resource_development
@@ -79,16 +79,13 @@ tags:
 
 ## Platform translations
 
+These translations match the URL-observable signals (`/prod-api/`, `/socket/1` on `.vip`/`.top`). The component vocabulary lives in the JS bundle body — see the YARA rule below for that surface.
+
 ### Elastic (ES|QL — web proxy)
 ```sql
 FROM logs-proxy*
 | WHERE http.request.method == "GET"
-| WHERE (
-    url.path LIKE "*useToRecharge*"
-    OR url.path LIKE "*useToWithdraw*"
-    OR url.path LIKE "*NoticeModal*"
-    OR url.path LIKE "*/prod-api/*"
-  )
+| WHERE url.path LIKE "*/prod-api/*" OR url.path LIKE "*/socket/1*"
 | WHERE url.domain LIKE "*.vip" OR url.domain LIKE "*.top"
 | KEEP @timestamp, host.name, user.name, url.full, http.response.status_code
 | SORT @timestamp DESC
@@ -97,19 +94,41 @@ FROM logs-proxy*
 ### Splunk (SPL — proxy)
 ```
 index=proxy sourcetype=proxy
-  (uri="*useToRecharge*" OR uri="*useToWithdraw*" OR uri="*NoticeModal*" OR uri="*/prod-api/*")
+  (uri="*/prod-api/*" OR uri="*/socket/1*")
   (dest_domain="*.vip" OR dest_domain="*.top")
 | table _time src_ip user dest_domain uri status
 ```
 
-### Microsoft (KQL — Defender web content events)
+### Microsoft (KQL — Defender network events)
 ```kql
 DeviceNetworkEvents
-| where RemoteUrl has_any ("useToRecharge","useToWithdraw","NoticeModal","/prod-api/")
+| where RemoteUrl has_any ("/prod-api/","/socket/1")
 | where RemoteUrl has_any (".vip",".top")
 | project Timestamp, DeviceName, AccountName, InitiatingProcessFileName,
           RemoteUrl, RemoteIP
 | sort by Timestamp desc
+```
+
+## Content fingerprint (YARA)
+
+The component vocabulary (`useToRecharge`, `useToWithdraw`, `NoticeModal`) is the durable, rebranding-resistant signal, but it appears in the **served JS bundle body**, not the request URL. Match it with YARA against captured response bodies / retrieved bundles, or with a proxy that performs response-content inspection — not with a URL-only proxy rule.
+
+```yara
+rule pbaas_vuejs_trading_kit_bundle
+{
+    meta:
+        author = "Justice Hammer"
+        date = "2026-07-11"
+        description = "Vue.js fake trading platform (PBaaS) SPA bundle component vocabulary"
+        reference = "DET-0006"
+    strings:
+        $a = "useToRecharge" ascii
+        $b = "useToWithdraw" ascii
+        $c = "NoticeModal" ascii
+        $api = "/prod-api/" ascii
+    condition:
+        2 of ($a, $b, $c) or (any of ($a, $b, $c) and $api)
+}
 ```
 
 ## WebSocket backend pivot

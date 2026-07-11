@@ -32,8 +32,10 @@ Validated against two separate ClickFix campaigns (EVALUSION/UNC2190 NetSupport 
 ## Sigma (canonical)
 ```yaml
 title: Startup Folder Write by Non-Installer Process
-id: 4a9e3c1b-2f7d-4b9a-c351-2f8e4d01e4c3
-status: experimental
+id: 023e1bee-e0a6-4b1d-81d4-470262cb534a
+status: test
+author: Justice Hammer
+date: 2026-07-11
 description: >
   Detects file creation events in Windows Startup folder locations initiated by
   processes associated with malicious delivery chains (msiexec, powershell, cmd,
@@ -111,7 +113,7 @@ DeviceFileEvents
 ```
 ### CrowdStrike (LogScale)
 ```
-#event_simpleName=AsepValueUpdate OR #event_simpleName=NewExecutableWritten
+#event_simpleName=NewExecutableWritten OR #event_simpleName=NewScriptWritten
 | TargetDirectoryName=/\\Start Menu\\Programs\\Startup\\/i
 | ImageFileName=/\\(msiexec|powershell|pwsh|cmd|wscript|cscript|python|pythonw|curl|certutil)\.exe$/i
 | ImageFileName!=/\\(TrustedInstaller|svchost|explorer)\.exe$/i
@@ -128,6 +130,8 @@ Validated against:
 2. Python RAT (GrayBravo/TAG-150): `pythonw.exe` from a ProgramData subfolder writes Python bytecode and watchdog script to Startup folder for persistence and auto-respawn.
 
 Both campaigns used user Startup folder (`%APPDATA%`) rather than the all-users path, consistent with not requiring elevated privileges at this stage.
+
+Lab reproduction: Atomic Red Team [T1547.001](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md) (Startup folder persistence), driving the write from `powershell.exe`/`cmd.exe` rather than a signed installer. Fixtures: [`tests/fixtures/startup-folder-write-non-installer.json`](../tests/fixtures/startup-folder-write-non-installer.json).
 
 ## References
 - https://attack.mitre.org/techniques/T1547/001/

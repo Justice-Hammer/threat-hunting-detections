@@ -5,8 +5,8 @@ type: hunt
 hunt_class: intel
 status: closed
 hypothesis: "ClickFix threat actors operating compromised WordPress delivery networks leave durable hash and behavioral signatures across web proxy logs and endpoint process telemetry that enable retrospective identification of victims and infrastructure."
-attack_tactics: [initial-access, execution, command-and-control]
-attack_techniques: [T1204.001, T1059.001, T1584.004]
+attack_tactics: [resource-development, initial-access, execution, defense-evasion, command-and-control]
+attack_techniques: [T1204.001, T1059.001, T1218.007, T1583.001, T1584.004]
 platforms_hunted: [elastic, defender]
 outcome: "Positive. Hash-based pivot against urlscan confirmed a 385-site centralized delivery network. Behavioral signatures (iex+irm parent-child lineage from browser/explorer) identified at-risk hosts. Produced DET-0002 and DET-0003."
 produced_detections:
@@ -94,11 +94,11 @@ High `delivery_sites` count against a single referrer = likely hub. Cross-refere
 - Hash-based urlscan pivot confirmed centralized delivery architecture across 385 compromised sites (287 US-registered, 19 countries).
 - Endpoint behavioral queries (Q3 + Q4) identified the full delivery chain on affected hosts.
 - C2 domains confirmed via process-level network connections post-detonation, corroborated by sandbox analysis.
-- Produced [[DET-0002 - ClickFix PowerShell IRM Execution]] and [[DET-0003 - Msiexec Silent Install from ProgramData]] as durable behavioral detections.
+- Produced [DET-0002 - ClickFix PowerShell IRM Execution](../20-detections/DET-0002%20-%20ClickFix%20PowerShell%20IRM%20Execution.md) and [DET-0003 - Msiexec Silent Install from ProgramData](../20-detections/DET-0003%20-%20Msiexec%20Silent%20Install%20from%20ProgramData.md) as durable behavioral detections.
 
 ## Detections produced
-- [[DET-0002 - ClickFix PowerShell IRM Execution]]
-- [[DET-0003 - Msiexec Silent Install from ProgramData]]
+- [DET-0002 - ClickFix PowerShell IRM Execution](../20-detections/DET-0002%20-%20ClickFix%20PowerShell%20IRM%20Execution.md)
+- [DET-0003 - Msiexec Silent Install from ProgramData](../20-detections/DET-0003%20-%20Msiexec%20Silent%20Install%20from%20ProgramData.md)
 
 ## ATT&CK mapping
 - T1204.001 — User Execution: Malicious Link (ClickFix social engineering)

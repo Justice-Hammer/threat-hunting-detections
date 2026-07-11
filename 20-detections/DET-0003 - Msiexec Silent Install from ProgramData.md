@@ -31,8 +31,10 @@ Validated against real-world EVALUSION/UNC2190 ClickFix campaigns where this pat
 ## Sigma (canonical)
 ```yaml
 title: Msiexec Silent Install from ProgramData
-id: 2f9d4a7c-1e3b-4c8a-b132-8d4f2c90e2a1
-status: experimental
+id: df1fcd6b-9582-462d-bc85-584f06b5b695
+status: test
+author: Justice Hammer
+date: 2026-07-11
 description: >
   Detects msiexec.exe silently installing an MSI from a user-writable C:\ProgramData\
   subdirectory. Legitimate enterprise deployments use Windows Installer paths or UNC
@@ -115,6 +117,8 @@ DeviceProcessEvents
 
 ## Validation notes
 Validated against observed EVALUSION/UNC2190 dropper chain: `powershell iex(irm)` → `msiexec.exe /qn /norestart C:\ProgramData\<random>\<payload>.msi`. Subfolder names under ProgramData were randomized per delivery wave, confirming path-based rules alone are insufficient: the `/qn` + `ProgramData` combination is the durable signal. Benign volume near-zero when the managed-deployment parent filter is applied.
+
+Lab reproduction: Atomic Red Team [T1218.007](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.007/T1218.007.md) (msiexec install), staging the MSI under a `C:\ProgramData\<random>\` path. Fixtures: [`tests/fixtures/msiexec-silent-install-programdata.json`](../tests/fixtures/msiexec-silent-install-programdata.json).
 
 ## References
 - https://attack.mitre.org/techniques/T1218/007/

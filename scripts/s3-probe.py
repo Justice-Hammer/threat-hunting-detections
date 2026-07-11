@@ -17,11 +17,15 @@ Usage:
     --base      Base name to generate candidate bucket names from
     --file      File containing one candidate bucket name per line
     --region    AWS region to probe (default: us-east-1)
-    --max-keys  Max objects to list per bucket (default: 10, use 0 for full listing)
+    --max-keys  Max objects to list per bucket (default: 10). 0 omits the
+                parameter, so S3 returns its own default page of up to 1000
+                keys — this probe does not paginate, so it is a sample, not
+                an exhaustive listing (by design: see the victim-data warning).
 
-Candidate generation from --base:
+Candidate generation from --base (12 names):
     <base>, <base>-prod, prod-<base>, <base>prod, <base>-dev, <base>-static,
-    <base>-upload, <base>-assets, <base>-storage, <base>-media
+    <base>-upload, <base>-assets, <base>-storage, <base>-media,
+    <base>-files, <base>-data
 
 WARNING: Only probe infrastructure you are authorized to investigate.
 Do not enumerate or access individual objects in buckets containing
@@ -120,7 +124,7 @@ def main():
         "--max-keys",
         type=int,
         default=10,
-        help="Max objects to list (0 = unlimited, use carefully)",
+        help="Max objects to list (0 = omit param; S3 returns up to 1000, no pagination)",
     )
     args = parser.parse_args()
 

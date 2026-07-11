@@ -60,11 +60,14 @@ These artifacts are consistent across builds from the same kit and survive opera
 1. **DOM/JS inspection:** `GOO-FAB`/`61Z-PAB` token literals in page source. Visible only in non-cloaked responses.
 2. **Proxy URL pattern:** React SPA bundles served from domains matching keyboard-mash naming patterns: very low legitimate-content prior.
 3. **Clipboard telemetry:** EDR clipboard-write events from a browser process followed immediately by a Run-dialog `powershell.exe` spawn.
-4. **Process lineage:** `explorer.exe` (Run dialog) → `powershell.exe` with `irm`+`iex` in command line; see [[DET-0002 - ClickFix PowerShell IRM Execution]].
+4. **Process lineage:** `explorer.exe` (Run dialog) → `powershell.exe` with `irm`+`iex` in command line; see [DET-0002 - ClickFix PowerShell IRM Execution](../20-detections/DET-0002%20-%20ClickFix%20PowerShell%20IRM%20Execution.md).
 
 ## Delivery architecture note
 
 This lure kit is designed for centralized deployment: a single operator-controlled hub serves the React SPA to many compromised delivery sites simultaneously. The hub uses server-side session control to rotate payloads and revoke access. The clipboard payload URL observed in any single sample may no longer be active. Hunt on behavioral signals (process lineage), not on IOC-specific URLs.
+
+## Public attribution
+ClickFix as a delivery technique, and the EVALUSION / UNC2190 activity cluster delivering NetSupport RAT, have been documented in public vendor reporting (Proofpoint, Microsoft, and Sekoia have all published on ClickFix fake-CAPTCHA lures). The behavioral tells in this note are released TLP:CLEAR on that basis; no client-specific infrastructure is included. Search the named vendors' research blogs for "ClickFix" and "EVALUSION" for the primary sources.
 
 ## References
 - https://attack.mitre.org/techniques/T1204/001/

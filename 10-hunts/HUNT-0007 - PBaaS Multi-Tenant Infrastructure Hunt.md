@@ -6,7 +6,7 @@ hunt_class: intel
 status: closed
 hypothesis: "Pig-butchering-as-a-Service platforms hosting multiple company impersonations on a shared backend leave correlated CT log, Shodan, and S3 enumeration artifacts that expose the full platform infrastructure even when the front-end is Cloudflare-proxied."
 attack_tactics: [resource-development, collection]
-attack_techniques: [T1583.001, T1583.006, T1530]
+attack_techniques: [T1583.001, T1583.006, T1608.005, T1530]
 platforms_hunted: [osint, shodan, crtsh, aws]
 outcome: "Positive. Full backend IP recovered via WebSocket domain CT log pivot. Multi-tenant S3 storage confirmed via public bucket listing. Victim KYC documents publicly accessible without authentication in operator-misconfigured upload bucket. Three simultaneous company impersonations confirmed from single backend. Produced DET-0006."
 produced_detections:
@@ -117,7 +117,7 @@ Querying WHOIS for each discovered domain and comparing registration metadata li
 
 ## Detections produced
 
-- [[DET-0006 - Vue.js Fake Trading Platform Kit Fingerprint]]
+- [DET-0006 - Vue.js Fake Trading Platform Kit Fingerprint](../20-detections/DET-0006%20-%20Vue.js%20Fake%20Trading%20Platform%20Kit%20Fingerprint.md)
 
 ## ATT&CK mapping
 

@@ -108,6 +108,9 @@ All front-end domains used Cloudflare for DNS and proxying. Cloudflare's abuse r
 
 Effective takedowns require coordinating Cloudflare (front-end proxy), the registrar (Dynadot for all observed domains, same account), and AWS (EC2 + S3 abuse) simultaneously.
 
+## Public attribution
+Pig-butchering (`sha zhu pan`) investment fraud and its as-a-service productization are documented in public reporting from law enforcement and industry (e.g., the US FBI IC3 annual reports, and research from Sophos, Chainalysis, and the Global Anti-Scam Organization). This note describes an infrastructure *pattern* observed via passive OSINT — the specific platform's identifying infrastructure (bucket names, domains, IPs) is withheld and no live adversary systems were accessed. Released TLP:CLEAR.
+
 ## References
 - https://attack.mitre.org/techniques/T1583/001/
 - https://attack.mitre.org/techniques/T1583/006/

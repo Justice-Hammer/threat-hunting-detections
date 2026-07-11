@@ -5,8 +5,8 @@ type: hunt
 hunt_class: intel
 status: closed
 hypothesis: "Threat actors impersonating LinkedIn and Indeed job platforms deliver CastleLoader via a finger.exe LOLBin chain, staging a Python embeddable disguised as a PDF before executing a multi-stage Python loader. This leaves durable behavioral artifacts across process creation, file system, and network telemetry."
-attack_tactics: [initial-access, execution, persistence, command-and-control]
-attack_techniques: [T1204.001, T1059.003, T1218, T1547.001, T1071.001]
+attack_tactics: [initial-access, execution, persistence, defense-evasion, command-and-control]
+attack_techniques: [T1204.001, T1059.003, T1059.006, T1218, T1547.001, T1562.001, T1071.001, T1132, T1573.001]
 platforms_hunted: [elastic, defender]
 outcome: "Positive. Finger.exe LOLBin execution confirmed; Python embeddable staging in ProgramData; Startup folder persistence; WebSocket C2 over HTTPS. Produced DET-0004 and DET-0005."
 produced_detections:
@@ -124,12 +124,12 @@ DeviceProcessEvents
 - Finger.exe LOLBin confirmed as script retrieval mechanism (Q1 — zero false positives in test environment).
 - Python embeddable staged to ProgramData subdirectory with Crewl-variant naming convention (Q4).
 - CastleLoader UUID C2 routing pattern confirmed (Q5); Python RAT WebSocket over HTTPS/443.
-- Startup folder persistence via Python bytecode + watchdog → see [[DET-0005 - Startup Folder Write by Non-Installer Process]].
+- Startup folder persistence via Python bytecode + watchdog → see [DET-0005 - Startup Folder Write by Non-Installer Process](../20-detections/DET-0005%20-%20Startup%20Folder%20Write%20by%20Non-Installer%20Process.md).
 - AV disable (Set-MpPreference) preceding RAT deployment confirmed (Q7).
 
 ## Detections produced
-- [[DET-0004 - Finger LOLBin Remote Script Retrieval]]
-- [[DET-0005 - Startup Folder Write by Non-Installer Process]]
+- [DET-0004 - Finger LOLBin Remote Script Retrieval](../20-detections/DET-0004%20-%20Finger%20LOLBin%20Remote%20Script%20Retrieval.md)
+- [DET-0005 - Startup Folder Write by Non-Installer Process](../20-detections/DET-0005%20-%20Startup%20Folder%20Write%20by%20Non-Installer%20Process.md)
 
 ## ATT&CK mapping
 - T1204.001 — User Execution: Malicious Link (ClickFix fake CAPTCHA)
@@ -139,4 +139,8 @@ DeviceProcessEvents
 - T1547.001 — Startup Folder persistence
 - T1562.001 — Impair Defenses: Disable Windows Defender
 - T1071.001 — Web Protocols (CastleLoader HTTPS C2)
-- T1132 — Data Encoding (ChaCha20/RC4 C2 encryption)
+- T1132 — Data Encoding (base64 + zlib stage-4 Python loader)
+- T1573.001 — Encrypted Channel: Symmetric Cryptography (ChaCha20/RC4 C2 encryption)
+
+## Public attribution
+CastleLoader / CastleRAT and the operator tracked as GrayBravo (Recorded Future Insikt Group designation **TAG-150**) are documented in public vendor reporting from 2025 (Recorded Future Insikt Group and IBM X-Force among others). The behavioral indicators in this hunt and in `indicators/castleloader-behavioral.csv` are released TLP:CLEAR on that basis. Search the named vendors' research for "CastleLoader" / "TAG-150" for the primary sources.

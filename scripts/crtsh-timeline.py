@@ -8,8 +8,8 @@ domain's infrastructure went live and identifying related subdomains.
 
 Usage:
     python3 crtsh-timeline.py <domain>
-    python3 crtsh-timeline.py ypprdf.top
-    python3 crtsh-timeline.py --include-expired ypprdf.top
+    python3 crtsh-timeline.py example-backend.top
+    python3 crtsh-timeline.py --include-expired example-backend.top
 
 Output columns:
     logged_at   — when the cert was submitted to CT logs

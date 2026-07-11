@@ -12,7 +12,7 @@ Requires: python-whois  (pip install python-whois)
 Usage:
     python3 domain-correlate.py domains.txt
     python3 domain-correlate.py domains.txt --window 3
-    echo "example.com\nother.com" | python3 domain-correlate.py -
+    printf 'example.com\nother.com\n' | python3 domain-correlate.py -
 
     --window    Days within which registrations are grouped as a batch (default: 7)
     --csv       Output in CSV format
