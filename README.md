@@ -28,6 +28,7 @@ Each detection ships in **Sigma** (canonical) plus translations for Microsoft De
 - **NetSupport RAT and CastleLoader/CastleRAT delivery** (EVALUSION and GrayBravo MaaS ecosystems)
 - **Startup folder persistence** (user-writable, no elevation required)
 - **Infrastructure reconnaissance** (PBN link injection for C2 domain reputation laundering)
+- **Pig-butchering-as-a-Service (PBaaS)** (Vue.js fake trading platform fingerprints, multi-tenant S3 infrastructure, passive OSINT hunt methodology)
 
 ---
 
