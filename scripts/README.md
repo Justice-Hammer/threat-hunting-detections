@@ -35,3 +35,7 @@ python3 domain-correlate.py domains.txt --csv > results.csv
 - `crtsh-timeline.py` filters out expired certs by default. Pass `--include-expired` to see the full history.
 - `s3-probe.py` generates 12 candidate bucket names from a base name. `--max-keys 0` omits the limit so S3 returns up to 1000 keys (the probe does not paginate; it samples, it does not exhaustively enumerate). Read the warning in the script first if the bucket may contain victim data.
 - `domain-correlate.py` requires WHOIS lookups which can be slow and rate-limited. Run against short lists or add delays if hitting rate limits.
+
+## Repo maintenance
+
+`build-navigator-layer.py` is not an investigation utility. It regenerates `attack/navigator-layer.json` from the `attack_techniques` frontmatter across the hunt, detection, and research pages. Run it after changing any page's technique list, or with `--check` to verify the committed layer is current (non-zero exit on drift, suitable for a CI gate). Depends on stdlib only.
