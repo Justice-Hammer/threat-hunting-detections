@@ -1,6 +1,6 @@
 # indicators
 
-TLP:CLEAR behavioral and kit-level indicators derived from real cases. Infrastructure IOCs (IPs, domains) are only released here once the associated campaign has public vendor attribution — until then they stay in private case files.
+TLP:CLEAR behavioral and kit-level indicators derived from real cases. Infrastructure IOCs (IPs, domains) are only released here once the associated campaign has public vendor attribution. Until then they stay in private case files.
 
 ## Format
 
@@ -12,7 +12,7 @@ Each CSV has these columns:
 | `type` | Indicator type (see types below) |
 | `context` | What this indicator represents |
 | `first_seen` | Earliest observed date (YYYY-MM-DD) |
-| `campaign` | Loose campaign label — not a case ID |
+| `campaign` | Loose campaign label, not a case ID |
 | `confidence` | high / medium / low |
 | `tlp` | Always CLEAR in this folder (public repo) |
 
@@ -37,7 +37,7 @@ Each CSV has these columns:
 ## Attribution basis
 
 The behavioral and kit-level indicators here map to activity clusters with existing
-public reporting — see the **Public attribution** sections in the related research
+public reporting; see the **Public attribution** sections in the related research
 notes and hunts (`ClickFix/EVALUSION` → RES-0004, `CastleLoader/TAG-150` → HUNT-0006,
 `PBaaS` → RES-0006). That prior public attribution is what makes these safe to
 release TLP:CLEAR.

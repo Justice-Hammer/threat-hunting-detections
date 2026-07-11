@@ -1,14 +1,14 @@
 # Contributing
 
 Thanks for helping improve these detections. This repo publishes sanitized
-threat-hunting tradecraft — corrections, translations for other platforms, and
+threat-hunting tradecraft: corrections, translations for other platforms, and
 false-positive reports are all welcome.
 
 ## Ground rules
 
 - **No client, victim, or case-identifying data** in issues, PRs, or commits.
 - **No live infrastructure IOCs** (IPs, C2 domains) unless the associated campaign
-  already has public vendor attribution — see `indicators/README.md`.
+  already has public vendor attribution. See `indicators/README.md`.
 - Defang IOCs in prose (`1.2.3[.]4`, `hxxps://`); keep the raw value only in the
   machine-readable `value:` field of a CSV where a pivot needs it.
 - Everything here is **TLP:CLEAR**. If it can't be, it doesn't belong in this repo.
@@ -17,7 +17,7 @@ false-positive reports are all welcome.
 
 Each detection has two copies of its Sigma rule:
 
-1. The canonical, machine-readable rule in [`sigma/`](sigma) — this is what CI validates.
+1. The canonical, machine-readable rule in [`sigma/`](sigma). This is what CI validates.
 2. A readability copy embedded in the `20-detections/` page.
 
 **Change both and keep them identical.** CI validates the `.yml`; it does not yet
@@ -25,9 +25,9 @@ diff the two, so drift is on you to prevent.
 
 ### Rule conventions
 
-- `id` must be a freshly generated **UUIDv4** (`uuidgen` or `python3 -c "import uuid;print(uuid.uuid4())"`) — never hand-typed, so it's guaranteed unique and valid.
+- `id` must be a freshly generated **UUIDv4** (`uuidgen` or `python3 -c "import uuid;print(uuid.uuid4())"`), never hand-typed, so it's guaranteed unique and valid.
 - Include `author`, `date`, `status`, `level`, `falsepositives`, and `tags`.
-- `status:` uses the [SigmaHQ maturity values](https://github.com/SigmaHQ/sigma-specification) (`experimental` → `test` → `stable`). The page frontmatter's `status: validated` is a *separate* analyst workflow field — don't conflate them.
+- `status:` uses the [SigmaHQ maturity values](https://github.com/SigmaHQ/sigma-specification) (`experimental` → `test` → `stable`). The page frontmatter's `status: validated` is a *separate* analyst workflow field; don't conflate them.
 - Every named selection must be referenced by `condition`.
 - Platform translations (KQL/SPL/ES\|QL/LogScale) are hand-written; note that they are not `sigma convert` output.
 

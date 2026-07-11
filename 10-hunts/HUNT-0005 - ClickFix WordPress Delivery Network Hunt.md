@@ -29,7 +29,7 @@ ClickFix threat actors targeting enterprise users via compromised WordPress lure
 
 ## Queries run
 
-### 1. Hash pivot — stage-2 loader (urlscan / web proxy)
+### 1. Hash pivot: stage-2 loader (urlscan / web proxy)
 The centralized ClickFix loader is a ~2KB JavaScript file. Hunt for the SHA256 of the observed loader in web proxy logs or urlscan to map the delivery network.
 
 urlscan hash search (OSINT):
@@ -38,7 +38,7 @@ hash:<sha256-of-observed-loader>
 ```
 Substitute the SHA256 of the stage-2 JS loader observed in your environment. Expected: multiple distinct domains all serving the byte-identical loader. Each hit is a confirmed compromised delivery site. Volume >20 hits confirms centralized-hub architecture.
 
-### 2. C2 domain infrastructure hunt — keyboard-mash pattern
+### 2. C2 domain infrastructure hunt: keyboard-mash pattern
 EVALUSION/UNC2190 C2 domains follow a low-entropy keyboard-mash naming pattern: 8-18 lowercase letters, no dictionary words, no hyphens (e.g., `pqrsmnabcd[.]com`, `xyzklmno[.]com`). Hunt in DNS/proxy for .com domains matching this profile registered within the last 90 days:
 
 ```kql
@@ -53,7 +53,7 @@ DeviceNetworkEvents
 
 Rare-by-frequency sorting surfaces newly-registered C2 domains before they accumulate volume.
 
-### 3. Endpoint — ClickFix PowerShell lineage
+### 3. Endpoint: ClickFix PowerShell lineage
 ```kql
 // Defender
 DeviceProcessEvents
@@ -67,7 +67,7 @@ DeviceProcessEvents
 | sort by Timestamp desc
 ```
 
-### 4. Endpoint — msiexec ProgramData drop from PowerShell parent
+### 4. Endpoint: msiexec ProgramData drop from PowerShell parent
 ```kql
 // Defender — msiexec child of powershell
 DeviceProcessEvents
@@ -80,7 +80,7 @@ DeviceProcessEvents
 | sort by Timestamp desc
 ```
 
-### 5. WordPress hub — centralized relay identification
+### 5. WordPress hub: centralized relay identification
 The EVALUSION delivery architecture routes all delivery-site callbacks through a single compromised WordPress site repurposed as a relay hub. Hunt for a single domain appearing in referrer headers of many distinct source domains in proxy logs:
 
 ```
@@ -101,8 +101,8 @@ High `delivery_sites` count against a single referrer = likely hub. Cross-refere
 - [DET-0003 - Msiexec Silent Install from ProgramData](../20-detections/DET-0003%20-%20Msiexec%20Silent%20Install%20from%20ProgramData.md)
 
 ## ATT&CK mapping
-- T1204.001 — User Execution: Malicious Link (ClickFix social engineering)
-- T1059.001 — PowerShell (`iex(irm)` delivery)
-- T1218.007 — System Binary Proxy Execution: Msiexec
-- T1584.004 — Compromise Infrastructure: Server (compromised WordPress delivery sites)
-- T1583.001 — Acquire Infrastructure: Domains (keyboard-mash C2 domain registration)
+- T1204.001 - User Execution: Malicious Link (ClickFix social engineering)
+- T1059.001 - PowerShell (`iex(irm)` delivery)
+- T1218.007 - System Binary Proxy Execution: Msiexec
+- T1584.004 - Compromise Infrastructure: Server (compromised WordPress delivery sites)
+- T1583.001 - Acquire Infrastructure: Domains (keyboard-mash C2 domain registration)

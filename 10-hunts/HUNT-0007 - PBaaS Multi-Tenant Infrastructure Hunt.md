@@ -34,7 +34,7 @@ All queries are passive. No active probing of adversary infrastructure.
 
 ## Hunt methodology
 
-### Step 1 — CT log pivot from front-end to backend
+### Step 1: CT log pivot from front-end to backend
 
 Starting from the Cloudflare-proxied front-end domain, query crt.sh for all certificates:
 
@@ -52,7 +52,7 @@ https://crt.sh/?q=<suspected-backend-domain>&output=json
 
 Backend domains typically do NOT use wildcard certs, revealing subdomains (`wss.`, `api.`, etc.) in named cert entries.
 
-### Step 2 — Shodan backend IP recovery
+### Step 2: Shodan backend IP recovery
 
 Once the WebSocket backend domain is identified, resolve it directly (it is typically not Cloudflare-proxied):
 
@@ -68,7 +68,7 @@ https://www.shodan.io/host/<ip>
 
 Check: open ports, TLS SAN (confirms backend domain), co-hosted domains (if any), HTTP/S service banners. PBaaS backends typically expose only 80/443 (Nginx), HTTP/3 + QUIC enabled, HSTS configured. No SSH or DB ports publicly exposed.
 
-### Step 3 — S3 bucket enumeration
+### Step 3: S3 bucket enumeration
 
 PBaaS platforms commonly use S3 for static asset serving and victim document collection. Enumerate predictable bucket names derived from the platform branding:
 
@@ -87,7 +87,7 @@ If a world-readable victim upload bucket is found: **do not download or enumerat
 
 In this hunt, an operator-misconfigured S3 bucket made victim KYC documents publicly accessible without authentication. The bucket name is withheld. The finding was reported to the appropriate parties; individual victim documents were not accessed beyond confirming the misconfiguration.
 
-### Step 4 — Multi-tenant brand pivot
+### Step 4: Multi-tenant brand pivot
 
 If S3 static assets are accessible, look for logos and branding assets in the `icon/` or `images/` prefix:
 
@@ -97,7 +97,7 @@ curl -s "https://<bucket>.s3.<region>.amazonaws.com/?prefix=icon/" | grep -o 'Ke
 
 Each distinct company logo in the shared storage confirms another simultaneous impersonation. Cross-reference logo filenames against known company names. Check for front-end domains serving each brand by searching CT logs for recent `.vip`/`.top` registrations.
 
-### Step 5 — Registration batch analysis
+### Step 5: Registration batch analysis
 
 Co-registered domains from the same Dynadot/Namecheap account often share:
 - Same registration date (within hours)
@@ -121,7 +121,7 @@ Querying WHOIS for each discovered domain and comparing registration metadata li
 
 ## ATT&CK mapping
 
-- T1583.001 — Acquire Infrastructure: Domains (batch registration of front-end + backend domains)
-- T1583.006 — Acquire Infrastructure: Web Services (AWS S3 + EC2 for backend hosting)
-- T1530 — Data from Cloud Storage (victim documents in misconfigured public S3 bucket)
-- T1608.005 — Stage Capabilities: Link Target (Vue.js SPA deployed for phishing lure)
+- T1583.001 - Acquire Infrastructure: Domains (batch registration of front-end + backend domains)
+- T1583.006 - Acquire Infrastructure: Web Services (AWS S3 + EC2 for backend hosting)
+- T1530 - Data from Cloud Storage (victim documents in misconfigured public S3 bucket)
+- T1608.005 - Stage Capabilities: Link Target (Vue.js SPA deployed for phishing lure)

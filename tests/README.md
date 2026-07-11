@@ -6,7 +6,7 @@ fire the rule (`"_expect": "fire"`) and one benign event that **should not**
 rule's category (`process_creation`, `file_event`, `proxy`), so they double as
 documentation of exactly what each rule keys on.
 
-These are hand-authored examples, not captured customer telemetry — no client or
+These are hand-authored examples, not captured customer telemetry; no client or
 victim data. They are here to make the detection logic reviewable and to seed a
 proper test harness.
 
@@ -22,8 +22,7 @@ sigma convert -t splunk ../sigma/clickfix-powershell-irm.yml
 ```
 
 `sigma check` (run in CI) validates rule structure; wiring the fixtures into a
-pySigma backend pipeline for automated fire/quiet assertions is the next step —
-see CONTRIBUTING.
+pySigma backend pipeline for automated fire/quiet assertions is the next step. See CONTRIBUTING.
 
 ## Live-behavior validation
 

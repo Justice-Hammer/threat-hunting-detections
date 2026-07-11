@@ -121,8 +121,8 @@ DeviceFileEvents
 ```
 
 ## False positives
-- Legitimate enterprise tooling (endpoint agents, update managers) that write Startup items — profile your environment's known-good writers and add them to the filter.
-- Package managers (Chocolatey, winget) occasionally write Startup entries — baseline as needed.
+- Legitimate enterprise tooling (endpoint agents, update managers) that write Startup items; profile your environment's known-good writers and add them to the filter.
+- Package managers (Chocolatey, winget) occasionally write Startup entries; baseline as needed.
 
 ## Validation notes
 Validated against:

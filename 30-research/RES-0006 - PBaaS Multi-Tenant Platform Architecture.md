@@ -18,7 +18,7 @@ tags: [research, pig-butchering, pbaas, infrastructure, multi-tenant, s3, aws, c
 
 ## Overview
 
-Pig-butchering-as-a-Service (PBaaS) is the productization of investment fraud infrastructure. Rather than building a fake trading platform per campaign, operators run a shared backend that serves multiple simultaneous company impersonations — different brands, same code, same server, same victim data pipeline. The multi-tenant model reduces operator overhead and makes individual takedowns less effective: removing one front-end domain leaves the backend and all other impersonations intact.
+Pig-butchering-as-a-Service (PBaaS) is the productization of investment fraud infrastructure. Rather than building a fake trading platform per campaign, operators run a shared backend that serves multiple simultaneous company impersonations: different brands, same code, same server, same victim data pipeline. The multi-tenant model reduces operator overhead and makes individual takedowns less effective: removing one front-end domain leaves the backend and all other impersonations intact.
 
 This note documents the infrastructure architecture of an observed PBaaS platform active in 2026, based on passive analysis. No live adversary systems were accessed.
 
@@ -61,7 +61,7 @@ Port profile (Shodan, 2026): 80/443 only (Nginx), HTTP/3 + QUIC enabled, HSTS co
 The platform used two S3 buckets in `ap-east-1`:
 
 - **Static asset bucket:** Access denied; contains platform UI assets and company logos for all active impersonations
-- **Victim upload bucket:** World-readable — no authentication required to list or access objects
+- **Victim upload bucket:** World-readable, no authentication required to list or access objects
 
 The victim upload bucket contained KYC documents submitted by fraud victims: identity photos, government-issued ID scans, and in some cases screen recordings. The bucket name is withheld. Victim files were not accessed or downloaded beyond confirming the misconfiguration.
 
@@ -109,7 +109,7 @@ All front-end domains used Cloudflare for DNS and proxying. Cloudflare's abuse r
 Effective takedowns require coordinating Cloudflare (front-end proxy), the registrar (Dynadot for all observed domains, same account), and AWS (EC2 + S3 abuse) simultaneously.
 
 ## Public attribution
-Pig-butchering (`sha zhu pan`) investment fraud and its as-a-service productization are documented in public reporting from law enforcement and industry (e.g., the US FBI IC3 annual reports, and research from Sophos, Chainalysis, and the Global Anti-Scam Organization). This note describes an infrastructure *pattern* observed via passive OSINT — the specific platform's identifying infrastructure (bucket names, domains, IPs) is withheld and no live adversary systems were accessed. Released TLP:CLEAR.
+Pig-butchering (`sha zhu pan`) investment fraud and its as-a-service productization are documented in public reporting from law enforcement and industry (e.g., the US FBI IC3 annual reports, and research from Sophos, Chainalysis, and the Global Anti-Scam Organization). This note describes an infrastructure *pattern* observed via passive OSINT. The specific platform's identifying infrastructure (bucket names, domains, IPs) is withheld and no live adversary systems were accessed. Released TLP:CLEAR.
 
 ## References
 - https://attack.mitre.org/techniques/T1583/001/

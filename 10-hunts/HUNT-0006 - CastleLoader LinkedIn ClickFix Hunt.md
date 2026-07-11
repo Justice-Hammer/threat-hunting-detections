@@ -48,7 +48,7 @@ Fake Cloudflare CAPTCHA (LinkedIn/Indeed typosquat)
 
 ## Queries run
 
-### 1. Finger.exe execution (highest signal — near-zero benign volume)
+### 1. Finger.exe execution (highest signal, near-zero benign volume)
 ```kql
 DeviceProcessEvents
 | where FileName =~ "finger.exe"
@@ -121,7 +121,7 @@ DeviceProcessEvents
 ```
 
 ## Findings
-- Finger.exe LOLBin confirmed as script retrieval mechanism (Q1 — zero false positives in test environment).
+- Finger.exe LOLBin confirmed as script retrieval mechanism (Q1, zero false positives in test environment).
 - Python embeddable staged to ProgramData subdirectory with Crewl-variant naming convention (Q4).
 - CastleLoader UUID C2 routing pattern confirmed (Q5); Python RAT WebSocket over HTTPS/443.
 - Startup folder persistence via Python bytecode + watchdog → see [DET-0005 - Startup Folder Write by Non-Installer Process](../20-detections/DET-0005%20-%20Startup%20Folder%20Write%20by%20Non-Installer%20Process.md).
@@ -132,15 +132,15 @@ DeviceProcessEvents
 - [DET-0005 - Startup Folder Write by Non-Installer Process](../20-detections/DET-0005%20-%20Startup%20Folder%20Write%20by%20Non-Installer%20Process.md)
 
 ## ATT&CK mapping
-- T1204.001 — User Execution: Malicious Link (ClickFix fake CAPTCHA)
-- T1059.003 — Windows Command Shell (caret-obfuscated cmd.exe)
-- T1218 — System Binary Proxy Execution: Finger (LOLBin)
-- T1059.006 — Python (Python embeddable loader + RAT)
-- T1547.001 — Startup Folder persistence
-- T1562.001 — Impair Defenses: Disable Windows Defender
-- T1071.001 — Web Protocols (CastleLoader HTTPS C2)
-- T1132 — Data Encoding (base64 + zlib stage-4 Python loader)
-- T1573.001 — Encrypted Channel: Symmetric Cryptography (ChaCha20/RC4 C2 encryption)
+- T1204.001 - User Execution: Malicious Link (ClickFix fake CAPTCHA)
+- T1059.003 - Windows Command Shell (caret-obfuscated cmd.exe)
+- T1218 - System Binary Proxy Execution: Finger (LOLBin)
+- T1059.006 - Python (Python embeddable loader + RAT)
+- T1547.001 - Startup Folder persistence
+- T1562.001 - Impair Defenses: Disable Windows Defender
+- T1071.001 - Web Protocols (CastleLoader HTTPS C2)
+- T1132 - Data Encoding (base64 + zlib stage-4 Python loader)
+- T1573.001 - Encrypted Channel: Symmetric Cryptography (ChaCha20/RC4 C2 encryption)
 
 ## Public attribution
 CastleLoader / CastleRAT and the operator tracked as GrayBravo (Recorded Future Insikt Group designation **TAG-150**) are documented in public vendor reporting from 2025 (Recorded Future Insikt Group and IBM X-Force among others). The behavioral indicators in this hunt and in `indicators/castleloader-behavioral.csv` are released TLP:CLEAR on that basis. Search the named vendors' research for "CastleLoader" / "TAG-150" for the primary sources.

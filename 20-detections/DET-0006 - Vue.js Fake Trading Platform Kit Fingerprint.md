@@ -26,7 +26,7 @@ tags: [detection, pig-butchering, pbaas, vue, fake-trading, web-proxy]
 
 Pig-butchering-as-a-Service platforms commonly deploy Vue.js single-page applications impersonating legitimate investment brokerages. The kit vocabulary (`useToRecharge`, `useToWithdraw`, `NoticeModal`) and backend API path conventions (`/prod-api/`) are consistent across operator deployments and survive customization of the lure company, domain, and branding. They appear in web proxy content inspection logs and DNS telemetry regardless of which company the kit is impersonating at any given time.
 
-The kit communicates with a WebSocket backend on a separate domain (pattern: `wss.<backend-domain>/socket/1`), typically on a `.top` TLD not fronted by Cloudflare — meaning the real backend IP is exposed in DNS even when the front-end domain is CF-proxied. This creates a detection opportunity: the WebSocket domain leaks the backend even if the front-end is otherwise opaque.
+The kit communicates with a WebSocket backend on a separate domain (pattern: `wss.<backend-domain>/socket/1`), typically on a `.top` TLD not fronted by Cloudflare, so the real backend IP is exposed in DNS even when the front-end domain is CF-proxied. This creates a detection opportunity: the WebSocket domain leaks the backend even if the front-end is otherwise opaque.
 
 Validated against a live PBaaS platform impersonating multiple financial services firms simultaneously from a single AWS EC2 backend in ap-east-1.
 
@@ -36,8 +36,8 @@ This kit targets humans via social engineering, not endpoint malware delivery. D
 
 | Surface | Signal | Where it's observable |
 |---|---|---|
-| Web proxy (URL) | `/prod-api/` and `/socket/1` paths on `.vip`/`.top` domains | Request URL — any proxy |
-| Web proxy / file (content) | JS bundle body containing `useToRecharge`, `useToWithdraw`, `NoticeModal` | Response **body** — needs a content-inspecting proxy or the YARA rule below |
+| Web proxy (URL) | `/prod-api/` and `/socket/1` paths on `.vip`/`.top` domains | Request URL, any proxy |
+| Web proxy / file (content) | JS bundle body containing `useToRecharge`, `useToWithdraw`, `NoticeModal` | Response **body**; needs a content-inspecting proxy or the YARA rule below |
 | DNS | Resolution of `wss.*` subdomain on `.top` TLD immediately following `.vip` domain resolution | DNS telemetry |
 | Network | WebSocket connection to `wss://<domain>/socket/1` from browser process | Network / browser telemetry |
 
@@ -79,9 +79,9 @@ tags:
 
 ## Platform translations
 
-These translations match the URL-observable signals (`/prod-api/`, `/socket/1` on `.vip`/`.top`). The component vocabulary lives in the JS bundle body — see the YARA rule below for that surface.
+These translations match the URL-observable signals (`/prod-api/`, `/socket/1` on `.vip`/`.top`). The component vocabulary lives in the JS bundle body; see the YARA rule below for that surface.
 
-### Elastic (ES|QL — web proxy)
+### Elastic (ES|QL, web proxy)
 ```sql
 FROM logs-proxy*
 | WHERE http.request.method == "GET"
@@ -91,7 +91,7 @@ FROM logs-proxy*
 | SORT @timestamp DESC
 ```
 
-### Splunk (SPL — proxy)
+### Splunk (SPL, proxy)
 ```
 index=proxy sourcetype=proxy
   (uri="*/prod-api/*" OR uri="*/socket/1*")
@@ -99,7 +99,7 @@ index=proxy sourcetype=proxy
 | table _time src_ip user dest_domain uri status
 ```
 
-### Microsoft (KQL — Defender network events)
+### Microsoft (KQL, Defender network events)
 ```kql
 DeviceNetworkEvents
 | where RemoteUrl has_any ("/prod-api/","/socket/1")
@@ -111,7 +111,7 @@ DeviceNetworkEvents
 
 ## Content fingerprint (YARA)
 
-The component vocabulary (`useToRecharge`, `useToWithdraw`, `NoticeModal`) is the durable, rebranding-resistant signal, but it appears in the **served JS bundle body**, not the request URL. Match it with YARA against captured response bodies / retrieved bundles, or with a proxy that performs response-content inspection — not with a URL-only proxy rule.
+The component vocabulary (`useToRecharge`, `useToWithdraw`, `NoticeModal`) is the durable, rebranding-resistant signal, but it appears in the **served JS bundle body**, not the request URL. Match it with YARA against captured response bodies / retrieved bundles, or with a proxy that performs response-content inspection, not with a URL-only proxy rule.
 
 ```yara
 rule pbaas_vuejs_trading_kit_bundle

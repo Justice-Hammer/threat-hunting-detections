@@ -4,3 +4,5 @@
 Thumbs.db
 __pycache__/
 *.pyc
+._*
+.DS_Store

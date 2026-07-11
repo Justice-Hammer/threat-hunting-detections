@@ -18,7 +18,7 @@ tags: [research, pbn, seo, infrastructure, reputation-laundering, c2]
 
 A **Private Blog Network (PBN)** is a collection of websites used to build artificial inbound backlinks to target domains, a technique originally developed for search engine ranking manipulation. Threat actors have adopted PBN backlink injection as an **infrastructure preparation technique**: pointing PBN links at newly registered C2 domains makes them appear as established, legitimate web properties to automated threat intelligence reputation feeds, web categorization engines, and domain age/activity checkers.
 
-There is no current ATT&CK technique that cleanly covers this. It is closest to **T1583.001 — Acquire Infrastructure: Domains** (the operator is paying for a service that improves the standing of their domain infrastructure), but this is a stretch: T1583 covers acquisition, not subsequent reputation preparation.
+There is no current ATT&CK technique that cleanly covers this. It is closest to **T1583.001 - Acquire Infrastructure: Domains** (the operator is paying for a service that improves the standing of their domain infrastructure), but this is a stretch: T1583 covers acquisition, not subsequent reputation preparation.
 
 ## Operational mechanism
 

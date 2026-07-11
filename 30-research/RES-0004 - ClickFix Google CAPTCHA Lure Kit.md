@@ -1,6 +1,6 @@
 ---
 id: RES-0004
-title: "ClickFix Google CAPTCHA Lure Kit — Technical Analysis"
+title: "ClickFix Google CAPTCHA Lure Kit: Technical Analysis"
 type: research
 attack_techniques: [T1204.001, T1059.001]
 informs_detections: ["[[DET-0002 - ClickFix PowerShell IRM Execution]]"]
@@ -12,7 +12,7 @@ updated: 2026-07-11
 tags: [research, clickfix, lure-kit, social-engineering, react]
 ---
 
-# ClickFix Google CAPTCHA Lure Kit — Technical Analysis
+# ClickFix Google CAPTCHA Lure Kit: Technical Analysis
 
 **Evidence basis:** Static analysis of a React SPA bundle served by a live ClickFix lure site.
 **Confidence:** High (source code confirmed).
@@ -23,7 +23,7 @@ The lure is a React single-page application impersonating a Google "Unusual traf
 
 Social-engineering flow: victim is prompted to press **Win + R → Ctrl + V → Enter** to paste and execute a clipboard payload via the Windows Run dialog.
 
-## Clipboard swap — kill-chain core
+## Clipboard swap: kill-chain core
 
 The lure displays a benign-looking verification code while silently writing the malicious payload to the clipboard:
 
