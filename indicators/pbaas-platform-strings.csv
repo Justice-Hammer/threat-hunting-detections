@@ -1,0 +1,7 @@
+value,type,context,first_seen,campaign,confidence,tlp
+useToRecharge,string,Vue.js fake trading platform — deposit workflow composable name. Present in SPA JS bundle regardless of impersonated company branding,2026-01-01,PBaaS/Chinese-operated fake trading platform,high,GREEN
+useToWithdraw,string,Vue.js fake trading platform — withdrawal workflow composable name. Present in SPA JS bundle,2026-01-01,PBaaS/Chinese-operated fake trading platform,high,GREEN
+NoticeModal,string,Vue.js fake trading platform — announcement/notice modal component name,2026-01-01,PBaaS/Chinese-operated fake trading platform,high,GREEN
+/prod-api/,url-pattern,PBaaS REST API path prefix. Present in XHR requests from the Vue.js SPA to the backend,2026-01-01,PBaaS/Chinese-operated fake trading platform,high,GREEN
+/socket/1,url-pattern,PBaaS WebSocket endpoint path. Full pattern: wss://wss.<domain>/socket/1,2026-01-01,PBaaS/Chinese-operated fake trading platform,high,GREEN
+struct.md,string,PBaaS operator platform config file found at S3 bucket root. Presence confirms bucket is platform storage and records initialization date,2026-01-01,PBaaS/Chinese-operated fake trading platform,medium,GREEN

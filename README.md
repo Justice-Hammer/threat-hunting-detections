@@ -17,6 +17,8 @@ Everything here started as internal case work. Cases are scrubbed before publish
 | `20-detections/` | Finished detection rules with multi-platform Sigma + KQL/SPL/ES\|QL/LogScale translations |
 | `10-hunts/` | Hunt hypothesis → query → findings → detection playbooks |
 | `30-research/` | Attack technique deep-dives that informed detections or hunts |
+| `indicators/` | TLP:GREEN behavioral and kit-level indicators in CSV format — infrastructure IOCs released only after public vendor attribution |
+| `scripts/` | Standalone investigation utilities: CT log timeline builder, S3 public bucket probe, domain registration batch correlator |
 
 ### Detection format
 

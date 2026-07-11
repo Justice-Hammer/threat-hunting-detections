@@ -1,0 +1,14 @@
+value,type,context,first_seen,campaign,confidence,tlp
+\\.\pipe\PipePipe!,named-pipe,Python RAT in-memory payload execution channel,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+DE6TZHGHlXfrbvmQdHxJIb035,mutex,CastleLoader mutex variant observed in-the-wild,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+MissedCallsTrapPhone,mutex,CastleLoader mutex variant observed in-the-wild,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+C:\Bot\projects\LOADER\PS_PythonLOADER\Interpretator,file-path,CastleLoader build artifact path embedded in stage-2 loader,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+NoviiCrewl,string,CastleLoader build ID embedded in stage-2 loader,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+CrewlPiton,string,CastleLoader build ID embedded in stage-2 loader,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+#mYprCv,string,Stage-2 Python loader comment marker — present in observed CastleLoader PS stage,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+/<uuid>/scr7,url-pattern,CastleLoader C2 victim-routing path pattern (UUID is per-victim),2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+/<uuid>/v3,url-pattern,CastleLoader C2 path pattern variant,2025-03-01,CastleLoader/GrayBravo TAG-150,medium,GREEN
+/<uuid>/v4,url-pattern,CastleLoader C2 path pattern variant,2025-03-01,CastleLoader/GrayBravo TAG-150,medium,GREEN
+C:\ProgramData\Ccrreewwll,file-path,CastleLoader Python runtime staging directory — Crewl naming variant,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+C:\ProgramData\CrewlCorpii,file-path,CastleLoader Python runtime staging directory — Crewl naming variant,2025-03-01,CastleLoader/GrayBravo TAG-150,high,GREEN
+C:\ProgramData\NewKevinNotAnother,file-path,CastleLoader Python runtime staging directory — operator naming variant,2025-03-01,CastleLoader/GrayBravo TAG-150,medium,GREEN

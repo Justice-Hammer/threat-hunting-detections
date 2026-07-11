@@ -1,0 +1,9 @@
+value,type,context,first_seen,campaign,confidence,tlp
+GOO-FAB,string,Google CAPTCHA ClickFix kit — decoy verification code displayed to victim. Present in page source when kit runs without operator-supplied props (demo mode),2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+61Z-PAB,string,Google CAPTCHA ClickFix kit — alternate decoy token. Same kit family as GOO-FAB,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+utp-,string,Google CAPTCHA ClickFix kit — CSS class prefix used in root component styles. Survives operator rebranding,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+final-screen hcfe,string,Google CAPTCHA ClickFix kit — post-verification overlay CSS class combination,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+displayCode,string,Google CAPTCHA ClickFix kit — React prop name for the visible decoy code,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+copyTextBase64,string,Google CAPTCHA ClickFix kit — React prop name for the base64-encoded clipboard payload,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+---Complete Verification---,string,ClickFix clipboard payload trailing comment noise — appended to PowerShell one-liner to make pasted content appear legitimate,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
+---PRESS ENTER---,string,ClickFix clipboard payload trailing comment noise — user instruction embedded in HTML comment,2025-01-01,ClickFix/EVALUSION UNC2190,high,GREEN
