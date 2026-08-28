@@ -1,0 +1,24 @@
+{
+  "detection": "DET-0007",
+  "logsource": {
+    "category": "file_event",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "TargetFilename": "C:\\Users\\u\\AppData\\Local\\Microsoft\\Windows\\Libraries\\QuickSystemSearch\\node.exe"
+    },
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "TargetFilename": "C:\\Users\\u\\AppData\\Local\\Microsoft\\Windows\\INetCache\\FilterManager\\HiddenVirtualSilentLoader.dat"
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\explorer.exe",
+      "TargetFilename": "C:\\Users\\u\\AppData\\Local\\Microsoft\\Windows\\Themes\\TranscodedWallpaper"
+    }
+  ]
+}

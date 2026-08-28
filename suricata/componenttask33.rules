@@ -1,0 +1,37 @@
+# "ComponentTask33" — Suricata rules  ·  TLP:CLEAR  ·  2026-08-28
+# author: Justice Hammer   ref: https://github.com/Justice-Hammer/threat-hunting-detections
+# Local SID block 9100000-9100099.
+#
+# VALIDATED against a real detonation PCAP (AnyRun, run 2026-08-27; analysed 2026-08-28).
+# Ground-truth notes:
+#  - The WebSocket UPGRADE handshake is plaintext (GET/Upgrade/X-Agent-Token) -> reliable.
+#  - Agent->C2 WS DATA frames (register/heartbeat) are RFC6455-MASKED on the wire, so their
+#    JSON is NOT content-matchable at the network layer. Detect the handshake + the server
+#    banner instead; frame-JSON detection requires a TLS/WS-terminating proxy or host sensor.
+#  - The eth_call RPC is HTTPS (TLS SNI publicnode.com) -> match on TLS SNI, body is encrypted.
+
+# --- C2 WS UPGRADE handshake (plaintext, client->server) — CONFIRMED on wire ---
+alert tcp $HOME_NET any -> $EXTERNAL_NET 3847 (msg:"ComponentTask33 C2 WebSocket upgrade (X-Agent-Token, TCP/3847)"; flow:established,to_server; content:"GET "; depth:4; content:"Upgrade|3a| websocket"; nocase; content:"X-Agent-Token|3a|"; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100001; rev:2;)
+
+# --- C2 panel server banner (server->client, unmasked) — CONFIRMED on wire ---
+alert tcp $EXTERNAL_NET 3847 -> $HOME_NET any (msg:"ComponentTask33 C2 panel banner (Express, Agent port WebSocket only)"; flow:established,to_client; content:"X-Powered-By|3a| Express"; nocase; content:"WebSocket only"; nocase; distance:0; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100002; rev:2;)
+
+# --- Remote-script pull: X-Agent-Token on GET /api/agent/script — CONFIRMED on wire ---
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"ComponentTask33 remote-script fetch (/api/agent/script + X-Agent-Token)"; flow:established,to_server; http.method; content:"GET"; http.uri; content:"/api/agent/script"; http.header; content:"X-Agent-Token|3a|"; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100003; rev:2;)
+
+# --- Delivery gate: capher.php?token= — CONFIRMED on wire ---
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"ComponentTask33 delivery gate capher.php?token="; flow:established,to_server; http.uri; content:"capher.php?token="; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100004; rev:2;)
+
+# --- Delivery response: MSI attachment served by the gate — CONFIRMED on wire ---
+alert http $EXTERNAL_NET any -> $HOME_NET any (msg:"ComponentTask33 MSI delivered (Content-Disposition ComponentTask33*.msi)"; flow:established,to_client; http.header; content:"Content-Disposition|3a|"; content:"filename="; distance:0; content:"ComponentTask33"; distance:0; content:".msi"; distance:0; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100007; rev:1;)
+
+# --- EtherHiding (SPECIFIC): TLS SNI to the config'd Polygon RPC — CONFIRMED (TLS SNI) ---
+# eth_call body is TLS-encrypted; match the SNI. Pair with the C2 connect that follows.
+alert tls $HOME_NET any -> $EXTERNAL_NET any (msg:"ComponentTask33 on-chain C2 discovery RPC (TLS SNI polygon-bor.publicnode.com)"; flow:established,to_server; tls.sni; content:"polygon-bor.publicnode.com"; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100005; rev:2;)
+
+# --- EtherHiding (GENERIC / TRANSFERABLE): non-browser host reaching a public EVM RPC ---
+# Most transferable analytic. HUNT/correlate — public RPCs are dual-use; do NOT inline-block.
+# Two visibility paths: (a) TLS SNI to known public RPC providers; (b) plaintext JSON-RPC
+# eth_call if the RPC is HTTP. Correlate with "host has no other crypto/wallet activity".
+alert tls $HOME_NET any -> $EXTERNAL_NET any (msg:"HUNT EtherHiding-style TLS SNI to public blockchain RPC (generic)"; flow:established,to_server; tls.sni; pcre:"/(publicnode\.com|llamarpc\.com|ankr\.com|drpc\.org|blastapi\.io|nodereal\.io|rpc\.ankr|blockpi\.network)$/i"; threshold:type limit, track by_src, count 1, seconds 3600; classtype:misc-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100006; rev:2;)
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"HUNT EtherHiding-style eth_call JSON-RPC over cleartext HTTP (generic)"; flow:established,to_server; http.method; content:"POST"; http.request_body; content:"|22|method|22 3a 22|eth_call|22|"; threshold:type limit, track by_src, count 1, seconds 3600; classtype:misc-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100008; rev:1;)

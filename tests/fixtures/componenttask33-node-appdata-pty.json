@@ -1,0 +1,21 @@
+{
+  "detection": "DET-0007",
+  "logsource": {
+    "category": "process_creation",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\conhost.exe",
+      "ParentImage": "C:\\Users\\u\\AppData\\Local\\Microsoft\\Windows\\Libraries\\QuickSystemSearch\\node.exe",
+      "CommandLine": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4"
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\System32\\conhost.exe",
+      "ParentImage": "C:\\Program Files\\nodejs\\node.exe",
+      "CommandLine": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+title: ComponentTask33 Agent Self-Registers Logon Scheduled Task
+id: 5cf0a32d-ecf7-4098-b5ba-e1a640cf26a6
+status: experimental
+description: >
+  The Node agent (not msiexec) registers persistence: node.exe spawns PowerShell
+  running Register-ScheduledTask with an AtLogon trigger whose action is a hidden
+  wscript/AppData launch. Time-decoupled from the installer.
+references:
+  - https://github.com/Justice-Hammer/threat-hunting-detections
+author: Justice Hammer
+date: 2026-08-28
+tags:
+  - attack.persistence
+  - attack.t1053.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains: 'Register-ScheduledTask'
+  parent:
+    ParentImage|endswith: '\node.exe'
+  condition: selection and parent
+falsepositives:
+  - Node-based installers that legitimately create scheduled tasks (rare; triage on the task action + AppData path).
+level: high

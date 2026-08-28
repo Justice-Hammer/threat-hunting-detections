@@ -8,7 +8,31 @@ false-positive reports are all welcome.
 
 - **No client, victim, or case-identifying data** in issues, PRs, or commits.
 - **No live infrastructure IOCs** (IPs, C2 domains) unless the associated campaign
-  already has public vendor attribution. See `indicators/README.md`.
+  already has public vendor attribution, **or** the release qualifies as a first
+  disclosure under the exception below. See `indicators/README.md`.
+
+### First-disclosure exception
+
+The attribution rule above assumes someone else has already published. For a family
+that no vendor has reported and no engine detects, it deadlocks: nobody can ever be
+first, and defenders get nothing.
+
+Infrastructure IOCs may be released ahead of public vendor attribution when all of
+the following hold, and the release note says so explicitly:
+
+- The family has **no public vendor reporting and no meaningful AV/sandbox detection**
+  at time of writing (state the evidence, e.g. a sandbox score).
+- The indicators are **derived from a sample**, not from a client environment, and
+  carry nothing victim-identifying.
+- Any indicator that is a **live campaign selector** (per-victim bot IDs, session
+  tokens, single-use delivery tokens) is **redacted** — those burn visibility for no
+  defensive gain.
+- The operational tradeoff is **stated in the note**: publishing durable infrastructure
+  tips the operator to rotate it. Publish anyway only when defender value clearly
+  exceeds the visibility you lose.
+
+This is a deliberate, documented exception. It is not a general relaxation of the rule,
+and it does not apply to anything sourced from a client engagement.
 - Defang IOCs in prose (`1.2.3[.]4`, `hxxps://`); keep the raw value only in the
   machine-readable `value:` field of a CSV where a pivot needs it.
 - Everything here is **TLP:CLEAR**. If it can't be, it doesn't belong in this repo.

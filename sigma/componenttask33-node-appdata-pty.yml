@@ -1,0 +1,33 @@
+title: ComponentTask33 Node Agent from AppData Spawning PTY Host
+id: e875fc82-c63d-43b1-955c-ef1eb01f3b59
+status: experimental
+description: >
+  node.exe executing from a user-writable AppData path and spawning a console/PTY
+  host (conhost/OpenConsole via node-pty conpty). Filename-agnostic — catches the
+  agent regardless of the per-build folder rename.
+references:
+  - https://github.com/Justice-Hammer/threat-hunting-detections
+author: Justice Hammer
+date: 2026-08-28
+tags:
+  - attack.execution
+  - attack.t1059.007
+  - attack.t1059.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith: '\node.exe'
+    ParentImage|contains:
+      - '\AppData\Local\'
+      - '\AppData\Roaming\'
+  selection_child:
+    Image|endswith:
+      - '\conhost.exe'
+      - '\OpenConsole.exe'
+      - '\winpty-agent.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Developer tooling running Node with an interactive terminal from AppData (e.g. VS Code servers). Tune by folder path.
+level: medium

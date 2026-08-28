@@ -1,0 +1,21 @@
+{
+  "detection": "DET-0007",
+  "logsource": {
+    "category": "process_creation",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\wscript.exe",
+      "ParentImage": "C:\\Windows\\System32\\svchost.exe",
+      "CommandLine": "wscript.exe //B \"C:\\Users\\u\\AppData\\Local\\ComponentTask33\\._agent.vbs\""
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\System32\\wscript.exe",
+      "ParentImage": "C:\\Windows\\explorer.exe",
+      "CommandLine": "wscript.exe C:\\Program Files\\Vendor\\setup-helper.vbs"
+    }
+  ]
+}

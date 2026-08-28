@@ -1,0 +1,33 @@
+title: ComponentTask33 Hidden VBScript Agent Launch (wscript //B ._agent.vbs)
+id: fbf86b62-e0a0-444d-9c20-d741559ee338
+status: experimental
+description: >
+  wscript.exe //B launching a dot-prefixed ._agent.vbs under a user AppData path.
+  Fires both for the MSI StartAgent custom action (parent msiexec) and for the
+  ComponentTask33Agent scheduled task at logon.
+references:
+  - https://github.com/Justice-Hammer/threat-hunting-detections
+author: Justice Hammer
+date: 2026-08-28
+tags:
+  - attack.execution
+  - attack.t1059.005
+  - attack.persistence
+  - attack.t1053.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\wscript.exe'
+    CommandLine|contains|all:
+      - '//B'
+      - '._agent.vbs'
+  scope:
+    CommandLine|contains:
+      - '\AppData\Local\'
+      - '\AppData\Roaming\'
+  condition: selection and scope
+falsepositives:
+  - Legitimate software rarely runs dot-prefixed .vbs from AppData via wscript //B.
+level: high

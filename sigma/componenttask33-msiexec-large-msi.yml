@@ -1,0 +1,28 @@
+title: ComponentTask33 Msiexec Install of MSI from Downloads
+id: 305eab13-df7a-4721-9445-bf0628b523e1
+status: experimental
+description: >
+  msiexec /i installing an .msi directly from the user's Downloads folder. Weak on
+  its own; corroborates the ComponentTask33 chain. MSI size (>50 MB) is not
+  expressible in Sigma — enforce via EDR/telemetry enrichment.
+references:
+  - https://github.com/Justice-Hammer/threat-hunting-detections
+author: Justice Hammer
+date: 2026-08-28
+tags:
+  - attack.initial_access
+  - attack.execution
+  - attack.t1218.007
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\msiexec.exe'
+    CommandLine|contains: '/i'
+    CommandLine|contains: '\Downloads\'
+    CommandLine|contains: '.msi'
+  condition: selection
+falsepositives:
+  - Users legitimately install MSIs from Downloads. Low fidelity by design; use as a corroborator.
+level: low

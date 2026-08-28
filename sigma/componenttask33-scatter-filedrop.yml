@@ -1,0 +1,35 @@
+title: ComponentTask33 Scatter Destination File Drop
+id: b200ee70-d871-4ea8-952b-903fdb276523
+status: experimental
+description: >
+  Payload files written into the four scatter destinations under
+  %LOCALAPPDATA%/%APPDATA%\Microsoft\Windows\{Themes,Libraries,INetCache,Shell}\.
+  Legitimate software does not stage a Node runtime or app\src\index.js there.
+references:
+  - https://github.com/Justice-Hammer/threat-hunting-detections
+author: Justice Hammer
+date: 2026-08-28
+tags:
+  - attack.defense_evasion
+  - attack.t1564
+  - attack.t1036.005
+logsource:
+  category: file_event
+  product: windows
+detection:
+  location:
+    TargetFilename|contains:
+      - '\Microsoft\Windows\Themes\'
+      - '\Microsoft\Windows\Libraries\'
+      - '\Microsoft\Windows\INetCache\'
+      - '\Microsoft\Windows\Shell\'
+  payload:
+    TargetFilename|endswith:
+      - '\node.exe'
+      - '\index.js'
+      - '\._agent.vbs'
+      - '.dat'
+  condition: location and payload
+falsepositives:
+  - node.exe under these specific shell/cache subfolders is not a normal Windows layout; low FP.
+level: high

@@ -1,0 +1,21 @@
+{
+  "detection": "DET-0007",
+  "logsource": {
+    "category": "process_creation",
+    "product": "windows"
+  },
+  "events": [
+    {
+      "_expect": "fire",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentImage": "C:\\Users\\u\\AppData\\Local\\Microsoft\\Windows\\Libraries\\QuickSystemSearch\\node.exe",
+      "CommandLine": "powershell -WindowStyle Hidden -File StreamServiceSharedBridge.ps1 ; Register-ScheduledTask -TaskName ComponentTask33Agent -Trigger $t -Action $a"
+    },
+    {
+      "_expect": "quiet",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentImage": "C:\\Windows\\System32\\services.exe",
+      "CommandLine": "powershell Register-ScheduledTask -TaskName VendorUpdateCheck -Xml $x"
+    }
+  ]
+}

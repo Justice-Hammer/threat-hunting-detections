@@ -17,8 +17,10 @@ Everything here started as internal case work. Cases are scrubbed before publish
 | `20-detections/` | Finished detection rules with multi-platform Sigma + KQL/SPL/ES\|QL/LogScale translations |
 | `10-hunts/` | Hunt hypothesis → query → findings → detection playbooks |
 | `30-research/` | Attack technique deep-dives that informed detections or hunts |
-| `indicators/` | TLP:CLEAR behavioral and kit-level indicators in CSV format; infrastructure IOCs released only after public vendor attribution |
+| `indicators/` | TLP:CLEAR behavioral and kit-level indicators in CSV format; infrastructure IOCs released only after public vendor attribution, or under the documented [first-disclosure exception](CONTRIBUTING.md#first-disclosure-exception) |
 | `sigma/` | Machine-readable canonical Sigma rules (one `.yml` per detection) for direct `sigma convert` |
+| `yara/` | YARA rules for file-content matching (one `.yar` per family) |
+| `suricata/` | Suricata network rules (local SID block 9100000-9100099) |
 | `scripts/` | Standalone investigation utilities: CT log timeline builder, S3 public bucket probe, domain registration batch correlator |
 | `tests/` | Sample true-positive / benign events per detection, plus Atomic Red Team references |
 | `attack/` | ATT&CK Navigator layer (`navigator-layer.json`) of technique coverage |
@@ -40,6 +42,7 @@ The platform translations are **hand-written**, not `sigma convert` output, so v
 | DET-0004: Finger LOLBin Remote Script Retrieval | T1218, T1105 | Sigma · KQL · SPL · ES\|QL · LogScale | HUNT-0006 |
 | DET-0005: Startup Folder Write by Non-Installer Process | T1547.001 | Sigma · KQL · SPL · ES\|QL · LogScale | HUNT-0005, HUNT-0006 |
 | DET-0006: Vue.js Fake Trading Platform Kit Fingerprint | T1583.001, T1608.005 | Sigma · KQL · SPL · ES\|QL · YARA | HUNT-0007 |
+| DET-0007: ComponentTask33 Node Agent Execution & Persistence | T1218.007, T1059.001, T1059.005, T1059.007, T1053.005, T1564.001 | Sigma · YARA · Suricata | RES-0007 |
 
 Full technique map (including hunt-only techniques like T1573.001 and T1530) is in [`attack/navigator-layer.json`](attack/navigator-layer.json). Load it into the [ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/) to see coverage across the matrix.
 
@@ -50,6 +53,8 @@ Full technique map (including hunt-only techniques like T1573.001 and T1530) is 
 - **Startup folder persistence** (user-writable, no elevation required)
 - **Infrastructure reconnaissance** (PBN link injection for C2 domain reputation laundering)
 - **Pig-butchering-as-a-Service (PBaaS)** (Vue.js fake trading platform fingerprints, multi-tenant S3 infrastructure, passive OSINT hunt methodology)
+- **MSI loaders deploying Node.js RATs** (per-user install, payload scattering across AppData decoy directories, agent-registered persistence)
+- **EtherHiding / on-chain C2 discovery** (smart-contract-based C2 resolution that survives domain takedown — includes a generic, family-agnostic hunting analytic)
 
 ---
 
