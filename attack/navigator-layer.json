@@ -11,9 +11,39 @@
   "hideDisabled": true,
   "techniques": [
     {
-      "techniqueID": "T1059.001",
+      "techniqueID": "T1005",
+      "score": 1,
+      "comment": "Covered by: RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1008",
+      "score": 2,
+      "comment": "Covered by: HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1027",
+      "score": 2,
+      "comment": "Covered by: HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1036.005",
       "score": 3,
-      "comment": "Covered by: DET-0002, HUNT-0005, RES-0004",
+      "comment": "Covered by: DET-0007, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1053.005",
+      "score": 3,
+      "comment": "Covered by: DET-0007, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "score": 6,
+      "comment": "Covered by: DET-0002, DET-0007, HUNT-0005, HUNT-0008, RES-0004, RES-0007",
       "enabled": true
     },
     {
@@ -23,27 +53,63 @@
       "enabled": true
     },
     {
+      "techniqueID": "T1059.005",
+      "score": 3,
+      "comment": "Covered by: DET-0007, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
       "techniqueID": "T1059.006",
       "score": 1,
       "comment": "Covered by: HUNT-0006",
       "enabled": true
     },
     {
+      "techniqueID": "T1059.007",
+      "score": 2,
+      "comment": "Covered by: DET-0007, HUNT-0008",
+      "enabled": true
+    },
+    {
       "techniqueID": "T1071.001",
-      "score": 1,
-      "comment": "Covered by: HUNT-0006",
+      "score": 3,
+      "comment": "Covered by: HUNT-0006, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1102",
+      "score": 2,
+      "comment": "Covered by: HUNT-0008, RES-0007",
       "enabled": true
     },
     {
       "techniqueID": "T1105",
+      "score": 3,
+      "comment": "Covered by: DET-0004, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1113",
+      "score": 2,
+      "comment": "Covered by: HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1119",
       "score": 1,
-      "comment": "Covered by: DET-0004",
+      "comment": "Covered by: RES-0007",
       "enabled": true
     },
     {
       "techniqueID": "T1132",
       "score": 1,
       "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1189",
+      "score": 2,
+      "comment": "Covered by: HUNT-0008, RES-0007",
       "enabled": true
     },
     {
@@ -60,8 +126,14 @@
     },
     {
       "techniqueID": "T1218.007",
-      "score": 2,
-      "comment": "Covered by: DET-0003, HUNT-0005",
+      "score": 5,
+      "comment": "Covered by: DET-0003, DET-0007, HUNT-0005, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1480",
+      "score": 1,
+      "comment": "Covered by: RES-0007",
       "enabled": true
     },
     {
@@ -72,14 +144,32 @@
     },
     {
       "techniqueID": "T1547.001",
-      "score": 2,
-      "comment": "Covered by: DET-0005, HUNT-0006",
+      "score": 4,
+      "comment": "Covered by: DET-0005, HUNT-0006, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1552.001",
+      "score": 1,
+      "comment": "Covered by: RES-0007",
       "enabled": true
     },
     {
       "techniqueID": "T1562.001",
       "score": 1,
       "comment": "Covered by: HUNT-0006",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1564.001",
+      "score": 3,
+      "comment": "Covered by: DET-0007, HUNT-0008, RES-0007",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1571",
+      "score": 2,
+      "comment": "Covered by: HUNT-0008, RES-0007",
       "enabled": true
     },
     {
@@ -119,13 +209,13 @@
       "#1f6febff"
     ],
     "minValue": 1,
-    "maxValue": 5
+    "maxValue": 6
   },
   "legendItems": [],
   "metadata": [
     {
       "name": "artifacts",
-      "value": "5 detections, 3 hunts, 3 research notes"
+      "value": "6 detections, 4 hunts, 4 research notes"
     }
   ],
   "showTacticRowBackground": true,

@@ -4,6 +4,7 @@ title: "ComponentTask33 MSI Loader with On-Chain C2 Discovery"
 type: research
 attack_techniques: [T1189, T1218.007, T1059.005, T1059.001, T1053.005, T1036.005, T1027, T1480, T1113, T1071.001, T1102, T1008, T1571, T1547.001, T1005, T1119, T1552.001, T1105, T1564.001]
 informs_detections: ["[[DET-0007 - ComponentTask33 Node Agent Execution and Persistence]]"]
+informs_hunts: ["[[HUNT-0008 - Scattered MSI Loader and On-Chain C2 Hunt]]"]
 references:
   - "https://attack.mitre.org/techniques/T1102/"
   - "https://attack.mitre.org/techniques/T1218/007/"

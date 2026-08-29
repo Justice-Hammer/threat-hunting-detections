@@ -10,6 +10,7 @@ platforms: [sigma]
 data_sources: [process_creation, file_event]
 lolbin: [msiexec.exe, wscript.exe, powershell.exe]
 false_positive_rate: low
+related_hunts: ["[[HUNT-0008 - Scattered MSI Loader and On-Chain C2 Hunt]]"]
 related_research: ["[[RES-0007 - ComponentTask33 MSI Loader with On-Chain C2 Discovery]]"]
 references:
   - "https://attack.mitre.org/techniques/T1218/007/"

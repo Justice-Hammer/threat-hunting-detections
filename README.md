@@ -42,7 +42,7 @@ The platform translations are **hand-written**, not `sigma convert` output, so v
 | DET-0004: Finger LOLBin Remote Script Retrieval | T1218, T1105 | Sigma · KQL · SPL · ES\|QL · LogScale | HUNT-0006 |
 | DET-0005: Startup Folder Write by Non-Installer Process | T1547.001 | Sigma · KQL · SPL · ES\|QL · LogScale | HUNT-0005, HUNT-0006 |
 | DET-0006: Vue.js Fake Trading Platform Kit Fingerprint | T1583.001, T1608.005 | Sigma · KQL · SPL · ES\|QL · YARA | HUNT-0007 |
-| DET-0007: ComponentTask33 Node Agent Execution & Persistence | T1218.007, T1059.001, T1059.005, T1059.007, T1053.005, T1564.001 | Sigma · YARA · Suricata | RES-0007 |
+| DET-0007: ComponentTask33 Node Agent Execution & Persistence | T1218.007, T1059.001, T1059.005, T1059.007, T1053.005, T1564.001 | Sigma · YARA · Suricata | HUNT-0008 |
 
 Full technique map (including hunt-only techniques like T1573.001 and T1530) is in [`attack/navigator-layer.json`](attack/navigator-layer.json). Load it into the [ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/) to see coverage across the matrix.
 
