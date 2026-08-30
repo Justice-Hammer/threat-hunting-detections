@@ -94,12 +94,14 @@ network capture.
 | Indicator | Type | Role | Confidence | Provenance |
 |---|---|---|---|---|
 | `api-configuard[.]com` | domain | Delivery gate | High | Observed |
-| `82.25.63[.]146` | IPv4 | Resolves `api-configuard[.]com` (ASN 207043) | High | Observed |
+| `82.25.63[.]146:80` | IPv4:port | Resolves `api-configuard[.]com` (ASN 207043); serves the MSI over cleartext HTTP | High | **Wire-observed** (2026-08-27) |
 | `/capher.php?token=<30-32 chars>` | URI pattern | Delivery gate, token-gated (serves `ComponentTask33-*.msi`) | High | Observed |
 | `shift-api-control[.]com` | domain | WebSocket C2 panel (Node.js Express) | High | **Wire-observed** |
 | `ws[:]//shift-api-control[.]com:3847` → `176.65.144[.]127` | URL | C2 endpoint | High | **Wire-observed** (2026-08-27) |
 | `0xf9099d0d747368cce8C10226CC9AF2bFD4DDbCF4` | Polygon contract | On-chain C2 discovery | High | Config-derived |
 | chainId `137` | Polygon mainnet | C2 discovery chain | High | Config-derived |
+| `0x0998dc3f7d8518dcb61f40d2874ef8667c680000` | Polygon EOA | Contract deployer and owner | High | On-chain |
+| `0xb9d04a4590cd6396858b4bb4876dd3a90c226c2119809ac3a30bf71876840062` | Polygon tx | Contract deployment | High | On-chain |
 
 ### Context only — DO NOT BLOCK
 
@@ -110,6 +112,57 @@ network capture.
 
 The **contract address and chainId** are the durable, actor-controlled indicators.
 The RPC endpoint is interchangeable and should be treated as context.
+
+### What the chain itself shows
+
+Reading the contract's public state adds several things the sample alone cannot tell you. All
+of it comes from replicated blockchain data through a neutral RPC, so none of it requires
+touching adversary infrastructure.
+
+**The rotation capability has never been used.** The contract holds exactly one transaction,
+its own deployment. `getPanelUrl()` still returns the value written into the constructor at
+offset 2169 of the deploy transaction, so the panel URL has never been updated. EtherHiding
+here is latent rather than active. That inverts the usual takedown calculus: removing
+`shift-api-control[.]com` would force the operator's first ever rotation, and because the new
+value lands in public contract state, defenders would see it immediately.
+
+**The contract was deployed 23 seconds before the installer was built.** Deployment is
+2026-08-24 11:20:09 UTC (block 92576921); the MSI summary-information `Created` timestamp is
+11:20:32 UTC the same day. The ordering is causally right, since the builder needs the contract
+address before it can write the agent config, and the gap is far too short to be manual. This
+is an automated build pipeline, which in turn suggests the contract address is a per-build
+artifact.
+
+> Read MSI timestamps with `TZ=UTC msiinfo suminfo`. `file` renders the CDF creation time with
+> a wrong offset and will put this an hour out.
+
+**The deployer has produced exactly one contract.** Contract addresses under `CREATE` are
+deterministic, so all 16 candidate addresses for the deployer's nonces were derived from
+`keccak256(rlp([sender, nonce]))[12:]` and probed. Nonce 15 reproduces the known contract
+exactly, which validates the method end to end, and no other nonce holds code. Scope that
+precisely: it covers `CREATE` from this EOA only, so a contract deployed from a different key,
+or through `CREATE2` or a factory, would not appear.
+
+**The deployer is a dormant wallet, reactivated.** Its 2024 activity is ordinary consumer
+crypto behaviour, then roughly 22 months of silence before this deployment. Whether that is the
+operator's own long-held wallet or a purchased aged one is not decidable from chain data, and
+the distinction matters enough that no identity inference should be drawn from its history.
+
+**The EOA is the better long-term pivot.** It survives both panel rotation and contract
+replacement, which the contract address does not.
+
+### Monitoring without touching the adversary
+
+Two checks give zero-contact early warning, because contract state is replicated:
+
+| Check | Method | Baseline (2026-08-29) | Meaning if changed |
+|---|---|---|---|
+| Panel URL | `eth_call` selector `0x4ab7874e` | `ws://shift-api-control.com:3847` | C2 rotated; the new URL is readable at once |
+| Contract writes | transaction count for the contract | `1` (deployment only) | first ever rotation |
+| Deployer nonce | `eth_getTransactionCount` | `16` | new deployment, likely a new campaign contract |
+
+Use an RPC of your own choosing rather than the one the malware uses. A failed read is an
+untested cycle, not a clean one.
 
 > Wire-observed 2026-08-27 (detonation): delivery `api-configuard[.]com` → `82.25.63[.]146`
 > served `ComponentTask33-*.msi` via `/capher.php?token=`; the agent then read the Polygon
@@ -385,8 +438,16 @@ cleartext-HTTP paths to public EVM RPCs: the most transferable rules here, and t
 Deploy them as hunting analytics correlated against hosts with no other crypto activity,
 **not** as inline blocks.
 
-Consider submitting the MSI to MalwareBazaar (tag the loader family) so others can
-retrohunt — it is currently unflagged by public tooling.
+The sample and its components are now on MalwareBazaar, and the network indicators are in
+ThreatFox, so both are available for retrohunting:
+
+- MSI `20a9e297220fe4cb9f939eaa82582c6e9a8f6dd4424635206dec08fa1986b8fa`
+- .NET launcher `9fa80577b8b3cb9c3062e5e1986cc9fe0c26eed023f7d430dfa5c60169c15c45`
+- .NET screenshot grabber `7969ccaf1db750bc3b02d51626d6916ecbd0c0cf2f7de3c7bc0be240f5f2978d`
+- Encoded config `601a84adaa7100f10060f1e8432d5a1981491cef944aa8212fab87bcb11dfcfc`
+
+At the time of submission the MSI was unflagged by public tooling, which is part of why
+it is worth having in a corpus others can pivot through.
 
 ---
 *Published TLP:CLEAR. Analysis derived from a public sandbox report and static

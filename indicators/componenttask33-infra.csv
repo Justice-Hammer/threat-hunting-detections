@@ -1,6 +1,6 @@
 value,type,context,first_seen,campaign,confidence,tlp
 api-configuard.com,domain,Delivery gate serving the token-gated MSI. Observed,2026-08-27,ComponentTask33,high,CLEAR
-82.25.63.146,ipv4,Resolves api-configuard.com (ASN 207043). Observed,2026-08-27,ComponentTask33,high,CLEAR
+82.25.63.146,ipv4,"Resolves api-configuard.com (ASN 207043). Serves the MSI over cleartext HTTP on TCP/80: wire-observed GET /capher.php?token= with Host: api-configuard.com and a response Content-Length of 56943312, matching the sample byte for byte. Submitted to ThreatFox as 82.25.63.146:80.",2026-08-27,ComponentTask33,high,CLEAR
 /capher.php?token=,url-pattern,Delivery gate path serving ComponentTask33-*.msi; token is 30-32 chars and likely single-use or short-lived,2026-08-27,ComponentTask33,high,CLEAR
 shift-api-control.com,domain,WebSocket C2 panel — Node.js Express. Wire-observed in a 2026-08-27 detonation PCAP,2026-08-27,ComponentTask33,high,CLEAR
 ws://shift-api-control.com:3847,url,Cleartext WebSocket C2 endpoint. Wire-observed. Agent-to-C2 data frames are RFC6455-masked so frame JSON is not network-matchable; the upgrade handshake is plaintext,2026-08-27,ComponentTask33,high,CLEAR
@@ -20,3 +20,5 @@ win-agent-client,string,npm package name of the purpose-built Node.js RAT. Survi
 c09f0e9b-1541-4553-858f-405d8c8ca297,mvid,ProfileQuickHost.exe .NET module version id. Stable across on-disk filename rotation,2026-08-21,ComponentTask33,high,CLEAR
 5c8e4531-c334-4e10-b389-481f7a12ade3,mvid,SearchTrustedRuntimeSvc.exe .NET module version id. Stable across on-disk filename rotation,2026-08-21,ComponentTask33,high,CLEAR
 X-Agent-Token,string,Bearer header on the C2 WebSocket upgrade and on GET /api/agent/script. Value is a 16-char per-victim token and is redacted,2026-08-27,ComponentTask33,high,CLEAR
+0x0998dc3f7d8518dcb61f40d2874ef8667c680000,polygon-eoa,"Deployer and owner of the on-chain C2 discovery contract. More durable than the contract itself: it survives both panel rotation and contract replacement. Dormant wallet from 2024, reactivated after roughly 22 months solely to deploy this contract.",2026-08-24,ComponentTask33,high,CLEAR
+0xb9d04a4590cd6396858b4bb4876dd3a90c226c2119809ac3a30bf71876840062,polygon-tx,"Contract deployment transaction, Polygon block 92576921 at 2026-08-24 11:20:09 UTC. Its constructor arguments carry the panel URL, so the deploy transaction alone yields the first C2.",2026-08-24,ComponentTask33,high,CLEAR
