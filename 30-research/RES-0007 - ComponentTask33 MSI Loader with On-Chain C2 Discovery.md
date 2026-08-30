@@ -20,7 +20,7 @@ tags: [research, msi-loader, nodejs-rat, etherhiding, on-chain-c2, polygon, firs
 
 An MSI dropper impersonating a Spotify installer deploys a purpose-built Node.js
 agent (`win-agent-client`) that talks WebSocket C2 and resolves its current C2
-address from a **Polygon smart contract** — EtherHiding-style discovery that survives
+address from a **Polygon smart contract**, EtherHiding-style discovery that survives
 domain takedown. Family is unattributed; `ComponentTask33` is a working designation
 taken from the install directory.
 
@@ -36,7 +36,7 @@ taken from the install directory.
 > - **Sample-derived, not client-derived.** Everything here comes from static
 >   examination of the sample and a public sandbox report. Nothing is victim-identifying.
 > - **Live campaign selectors are redacted.** The per-victim bot `token` in the decoded
->   config is withheld — publishing it would burn visibility for no defensive gain.
+>   config is withheld. Publishing it would burn visibility for no defensive gain.
 > - **The tradeoff, stated plainly.** The Polygon contract is the durable, actor-controlled
 >   indicator; publishing it tips the operator to redeploy. We judge that defenders
 >   knowing about contract-based C2 discovery in a family nothing detects outweighs the
@@ -50,7 +50,7 @@ An MSI installer impersonating a Spotify client drops a Node.js agent into
 `%LOCALAPPDATA%\ComponentTask33\`, then **scatters** the payload across four
 decoy directories under `%LOCALAPPDATA%`/`%APPDATA%` (Windows shell/cache
 folders) so no single directory resembles malware. A launcher/persistence stub
-remains in `ComponentTask33\`. The agent — not the MSI — then registers a
+remains in `ComponentTask33\`. The agent, not the MSI, then registers a
 scheduled task (`ComponentTask33Agent`, AtLogon, per-user) that runs
 `wscript.exe //B` against a hidden VBScript, which re-exports the scattered
 paths and launches `node.exe`. Its configuration is stored base64-over-XOR on
@@ -59,7 +59,7 @@ discover the current C2 address**, making the infrastructure resistant to
 domain takedown.
 
 Notable: a public sandbox detonation scored this **3/100 (clean)** with no YARA,
-Sigma, or Suricata hits — the payload's disk footprint is legitimate npm content
+Sigma, or Suricata hits. The payload's disk footprint is legitimate npm content
 and the agent had not beaconed before analysis ended. The WebSocket C2 below was
 recovered only by static config decryption; it does not appear in the sandbox's
 network capture.
@@ -69,13 +69,13 @@ network capture.
 
 ## Execution & persistence chain
 
-1. **Install.** `msiexec /i` on the ~57 MB "Spotify" MSI — a **per-user** install (no
+1. **Install.** `msiexec /i` on the ~57 MB "Spotify" MSI, a **per-user** install (no
    UAC, medium integrity). Two custom actions fire **after `InstallFinalize`** in the
    user's context:
-   - `powershell … -File "…\._scatter.ps1" -AnchorDir "<dir>"` — **scatters** the payload
+   - `powershell … -File "…\._scatter.ps1" -AnchorDir "<dir>"`: **scatters** the payload
      into four decoy directories (see Host artefacts).
-   - `wscript.exe //B "…\._agent.vbs"` — **starts** the agent once.
-2. **Persist.** On first run the **agent — not the MSI** — runs
+   - `wscript.exe //B "…\._agent.vbs"`: **starts** the agent once.
+2. **Persist.** On first run the **agent, not the MSI**, runs
    `StreamServiceSharedBridge.ps1`, which registers scheduled task `ComponentTask33Agent`
    (AtLogon, per-user, hidden); on failure it falls back to an HKCU Run key. Persistence
    therefore appears as `node.exe → powershell.exe`, seconds **after** `msiexec` exits.
@@ -103,7 +103,7 @@ network capture.
 | `0x0998dc3f7d8518dcb61f40d2874ef8667c680000` | Polygon EOA | Contract deployer and owner | High | On-chain |
 | `0xb9d04a4590cd6396858b4bb4876dd3a90c226c2119809ac3a30bf71876840062` | Polygon tx | Contract deployment | High | On-chain |
 
-### Context only — DO NOT BLOCK
+### Context only: DO NOT BLOCK
 
 | Indicator | Why not to block |
 |---|---|
@@ -172,7 +172,7 @@ untested cycle, not a clean one.
 
 ## File indicators
 
-**MSI dropper** — `ComponentTask33-4d14e6ac.msi` (cached as `C:\Windows\Installer\<rand>.msi`)
+**MSI dropper**: `ComponentTask33-4d14e6ac.msi` (cached as `C:\Windows\Installer\<rand>.msi`)
 
 ```
 MD5     14D37B2BA441E42D5D13BD2596DA3EBC
@@ -182,7 +182,7 @@ Size    56,943,312 bytes
 Entropy 7.9948
 ```
 
-**Encoded config** — `HiddenVirtualSilentLoader.dat`
+**Encoded config**: `HiddenVirtualSilentLoader.dat`
 
 ```
 MD5     039B73BD42E102F9366BD0B83189DCC7
@@ -193,9 +193,9 @@ Entropy 5.2597
 ```
 
 **.NET helper tools** (unsigned, ~4.6 KB managed .NET 4.x, compiled 2026-08-21
-21:17:54 UTC; on-disk filenames rotate per build — internal names and MVIDs do not):
+21:17:54 UTC; on-disk filenames rotate per build, internal names and MVIDs do not):
 
-`ProfileQuickHost.exe` — native launcher (internal name `WinAgent.exe`; launches
+`ProfileQuickHost.exe`: native launcher (internal name `WinAgent.exe`; launches
 `node.exe app\src\index.js` hidden, `--uninstall`-aware)
 
 ```
@@ -204,7 +204,7 @@ SHA256  9FA80577B8B3CB9C3062E5E1986CC9FE0C26EED023F7D430DFA5C60169C15C45
 MVID    c09f0e9b-1541-4553-858f-405d8c8ca297
 ```
 
-`SearchTrustedRuntimeSvc.exe` — screenshot grabber (internal name `CaptureScreen.exe`;
+`SearchTrustedRuntimeSvc.exe`: screenshot grabber (internal name `CaptureScreen.exe`;
 full virtual-screen → PNG; `Usage: CaptureScreen.exe <output.png>`)
 
 ```
@@ -219,7 +219,7 @@ The payload is **scattered** at install time: `._scatter.ps1` (run by an MSI cus
 action) relocates the executable payload out of `%LOCALAPPDATA%\ComponentTask33\`
 into four decoy directories and leaves only a launcher/persistence stub behind. The
 digit-suffixed folder names below are **constant for this build** but are expected to
-**rotate between builds** (the builder is polymorphic) — treat the *layout shape* as
+**rotate between builds** (the builder is polymorphic). Treat the *layout shape* as
 the durable indicator and the exact leaf names as build-specific.
 
 **Post-install file layout**
@@ -236,9 +236,9 @@ the durable indicator and the exact leaf names as build-specific.
 
 | Artefact | Value |
 |---|---|
-| Scheduled task | `ComponentTask33Agent` — AtLogon, current user, hidden, no time limit. **Registered by the agent (`node.exe` → `powershell.exe`), not by `msiexec`.** |
+| Scheduled task | `ComponentTask33Agent`: AtLogon, current user, hidden, no time limit. **Registered by the agent (`node.exe` → `powershell.exe`), not by `msiexec`.** |
 | Task command | `wscript.exe //B "%LOCALAPPDATA%\ComponentTask33\._agent.vbs"` |
-| Run-key fallback | `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\ComponentTask33Agent` — written **only if** scheduled-task registration fails; same command |
+| Run-key fallback | `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\ComponentTask33Agent`, written **only if** scheduled-task registration fails; same command |
 
 **Transient / teardown artefacts**
 
@@ -249,14 +249,14 @@ the durable indicator and the exact leaf names as build-specific.
 
 > Notes:
 > - The declared config value `scatter.anchor` -> `...\Themes\SharedSecureHelper30` is a
->   **dead string** — nothing is ever written there; the real anchor stays at
+>   **dead string**. Nothing is ever written there; the real anchor stays at
 >   `ComponentTask33\`. Do not block/hunt `SharedSecureHelper30`.
 > - `MonitorExtensionStreamLoader.cmd` is referenced in metadata but never shipped or
->   created — a dead reference, not an artefact.
+>   created, a dead reference rather than an artefact.
 > - Plaintext `config.json` is deleted during scatter; only the XOR-packed
 >   `HiddenVirtualSilentLoader.dat` survives.
 > - An MSI **uninstall does not remove** the scattered payload, the scheduled task, or
->   the Run-key fallback — they persist independently of the installer.
+>   the Run-key fallback. They persist independently of the installer.
 
 **MSI GUIDs**
 
@@ -283,9 +283,9 @@ Created   2026-08-24 11:20:32 UTC
 ## Configuration format
 
 `HiddenVirtualSilentLoader.dat` is **base64 → repeating-key XOR**. **The XOR key is not a
-constant** — it is the `buildSeed` value stored in that build's `install-meta.json`, and it
+constant**. It is the `buildSeed` value stored in that build's `install-meta.json`, and it
 **rotates per build**. For this sample `buildSeed` = `c8c384083f`, but a hunt rule must
-**never hardcode that value** — read it from the sibling `install-meta.json` instead:
+**never hardcode that value**. Read it from the sibling `install-meta.json` instead:
 
 ```python
 import base64, json
@@ -312,21 +312,21 @@ Decoded structure (indicators **defanged**; this build):
 
 Operational values: heartbeat 12 minutes, reconnect delay 15 seconds, C2 discovery cache
 TTL 5 minutes. When `contractDiscovery.enabled` is true the agent **deletes** the static
-`panelUrl` and takes its C2 solely from the contract — so the **contract is the durable
+`panelUrl` and takes its C2 solely from the contract, so the **contract is the durable
 indicator**, and a takedown of the panel domain alone is low-value. The per-victim `token`
 is a live campaign selector and is **kept redacted** (publishing it may burn visibility).
 
 ## Agent capabilities
 
 A **purpose-built** Node.js RAT (`win-agent-client`), not a trojanised legitimate app. The
-operator drives it over the WebSocket with JSON `{type, payload}` messages — **13 built-in
+operator drives it over the WebSocket with JSON `{type, payload}` messages: **13 built-in
 command types**, plus two ways to run arbitrary code, so the built-ins are a **floor, not a
 ceiling**:
 
 | Command | What it does |
 |---|---|
 | `powershell` / `cmd` | run a PowerShell / cmd.exe command; returns stdout/stderr/exit |
-| `shell` | interactive PTY (node-pty ConPTY) — `cmd.exe` or `powershell.exe` |
+| `shell` | interactive PTY (node-pty ConPTY), `cmd.exe` or `powershell.exe` |
 | `eval` | run arbitrary JavaScript in-process (`fs`/`os`/`path`/`Buffer` exposed) |
 | `download_run` | download a URL to `%TEMP%`, execute it detached + hidden |
 | `deploy` | drop and run an MSI / PS1 / CMD (base64 or URL); MSI installs per-user |
@@ -338,15 +338,15 @@ ceiling**:
 | `reconnect` / `capabilities` / `load_script` | control / metadata |
 | *(remote script)* | a per-connect script from `/api/agent/script` can register **new** command types via `extraCommands` |
 
-**Wallet targeting — scope it precisely.** `wallet_scan` is **operator-triggered,
+**Wallet targeting, scoped precisely.** `wallet_scan` is **operator-triggered,
 presence-only, report-only**: it enumerates ~37 desktop-wallet folders and ~48
 browser-extension wallet IDs and returns `{name, type, path}`. **It reads no keystores or
-seed phrases.** It is a *targeting* capability, not theft in itself — extraction would be a
+seed phrases.** It is a *targeting* capability, not theft in itself. Extraction would be a
 separate second step (`files` / `eval` / `deploy`). Describe victim impact this way: neither
 oversell it as a "wallet stealer" nor undersell the risk.
 
 **No guardrails.** No VM/sandbox/geo checks anywhere in the agent (ATT&CK T1497 notably
-**absent**) — worth stating explicitly, since its evasion relies entirely on looking like a
+**absent**), worth stating explicitly, since its evasion relies entirely on looking like a
 developer tool.
 
 ## MITRE ATT&CK
@@ -381,14 +381,14 @@ developer tool.
   -AnchorDir "*"` (the `-AnchorDir` switch is high-selectivity), plus the sibling
   `msiexec.exe → wscript.exe //B "*\._agent.vbs"`.
 - Scheduled-task creation via `node.exe → powershell.exe … Register-ScheduledTask`
-  **decoupled in time from `msiexec`** — the tell that persistence is agent-registered,
+  **decoupled in time from `msiexec`**, the tell that persistence is agent-registered,
   not installer-registered.
 - `msiexec /i` against a >50 MB MSI in `%USERPROFILE%\Downloads`.
 - Files named `._agent.vbs`, `._scatter.ps1`, or `HiddenVirtualSilentLoader.dat`
   anywhere on disk (dot-prefixed names are unusual on Windows).
 - **Scattered Node runtime:** `node.exe` beside `node_modules\` in a leaf directory
   under `%LOCALAPPDATA%\Microsoft\Windows\{Libraries,INetCache,Shell}\` or
-  `%APPDATA%\Microsoft\Windows\Themes\` — especially a leaf holding
+  `%APPDATA%\Microsoft\Windows\Themes\`, especially a leaf holding
   `app\src\index.js` beside `node_modules\ws`. Legitimate software does not stage a
   Node runtime in these shell/cache folders. (The exact leaf names rotate per build;
   match on the shape.)
@@ -398,7 +398,7 @@ developer tool.
   leaves (self-destruct), or `%TEMP%\wra-update-*.zip` + `wra-apply-*.ps1` (self-update).
 - Endpoint DNS/flow to `shift-api-control[.]com`, or WebSocket traffic to port 3847.
 - Non-crypto endpoints issuing `eth_call` / JSON-RPC to public blockchain RPC
-  endpoints — a strong general signal for EtherHiding-style malware regardless of
+  endpoints, a strong general signal for EtherHiding-style malware regardless of
   this specific family.
 
 ## Caveats
@@ -408,7 +408,7 @@ developer tool.
 - No public sandbox or AV verdict identified this as malicious at time of writing; a
   detonation scored it 3/100 (clean) with zero YARA/Sigma/Suricata hits. The sample is
   effectively invisible to signature tooling until rules like the accompanying set exist.
-- `polygon-bor.publicnode[.]com` is a legitimate service — see the do-not-block table.
+- `polygon-bor.publicnode[.]com` is a legitimate service. See the do-not-block table.
 - No actor attribution is asserted. Hosting-provider overlap with unrelated
   campaigns is not treated as evidence of a shared operator.
 
@@ -426,13 +426,13 @@ Machine-readable indicators: [`indicators/componenttask33-infra.csv`](../indicat
 
 **The Suricata rules are PCAP-validated**, and the capture corrected two assumptions that
 static analysis got wrong. Agent→C2 WebSocket data frames are **RFC6455-masked**, so the
-`register`/`heartbeat` JSON is *not* content-matchable on the wire — detection has to key on
+`register`/`heartbeat` JSON is *not* content-matchable on the wire. Detection has to key on
 the plaintext upgrade handshake and the server banner instead. And the `eth_call` RPC runs
 over **HTTPS**, so its body is encrypted; the rule matches TLS SNI. Rules written against
 the pre-capture assumptions would not have fired.
 
-Two design notes carry into the rules. The YARA does **not** hardcode the per-build XOR key —
-it anchors on the `buildSeed` key name and JSON shape, because the key rotates every build.
+Two design notes carry into the rules. The YARA does **not** hardcode the per-build XOR key.
+It anchors on the `buildSeed` key name and JSON shape, because the key rotates every build.
 And `sid:9100006`/`sid:9100008` are **generic** EtherHiding analytics covering the TLS-SNI and
 cleartext-HTTP paths to public EVM RPCs: the most transferable rules here, and the noisiest.
 Deploy them as hunting analytics correlated against hosts with no other crypto activity,

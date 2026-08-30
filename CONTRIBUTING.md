@@ -25,7 +25,7 @@ the following hold, and the release note says so explicitly:
 - The indicators are **derived from a sample**, not from a client environment, and
   carry nothing victim-identifying.
 - Any indicator that is a **live campaign selector** (per-victim bot IDs, session
-  tokens, single-use delivery tokens) is **redacted** — those burn visibility for no
+  tokens, single-use delivery tokens) is **redacted**. Those burn visibility for no
   defensive gain.
 - The operational tradeoff is **stated in the note**: publishing durable infrastructure
   tips the operator to rotate it. Publish anyway only when defender value clearly

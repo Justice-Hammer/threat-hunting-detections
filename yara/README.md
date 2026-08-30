@@ -19,7 +19,7 @@ particular the ComponentTask33 config store is XOR-packed with a key that **rota
 per build** (it is the `buildSeed` field of that build's `install-meta.json`), so the
 config rule matches the *key name* and surrounding JSON shape rather than any key
 byte value. Do not "improve" these rules by hardcoding a seed you observed in one
-sample — it will not match the next one.
+sample. It will not match the next one.
 
 The `.NET` helper rule is LOW priority: on-disk filenames rotate per build, so it
 pins embedded internal names. Prefer the MVIDs listed in the related research note

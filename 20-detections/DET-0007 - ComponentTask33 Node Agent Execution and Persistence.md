@@ -36,18 +36,18 @@ hits.
 
 What does not rotate is the **shape**. These rules key on that:
 
-1. **Install-time custom actions** — `msiexec` spawning PowerShell against `._scatter.ps1`
+1. **Install-time custom actions**: `msiexec` spawning PowerShell against `._scatter.ps1`
    with the `-AnchorDir` switch, and `wscript //B` against a dot-prefixed `.vbs`.
    Dot-prefixed filenames are a Unix idiom and unusual on Windows.
-2. **Agent-registered persistence** — the scheduled task is created by `node.exe` →
+2. **Agent-registered persistence**: the scheduled task is created by `node.exe` →
    `powershell.exe`, seconds *after* `msiexec` has already exited. That time-decoupling
    is the tell: installers register their own persistence, malware that registers it from
    the payload does not.
-3. **A Node runtime living in shell/cache folders** — `node.exe` beside `node_modules\` under
+3. **A Node runtime living in shell/cache folders**: `node.exe` beside `node_modules\` under
    `%LOCALAPPDATA%\Microsoft\Windows\{Libraries,INetCache,Shell}\` or
    `%APPDATA%\Microsoft\Windows\Themes\`. Legitimate software does not stage Node there.
 
-Rule 6 (`msiexec-large-msi`) is deliberately **low fidelity** — it is triage volume, not a
+Rule 6 (`msiexec-large-msi`) is deliberately **low fidelity**. It is triage volume, not a
 standalone alert. Pair it with the others or with a size filter.
 
 > [!note] Status
@@ -58,7 +58,7 @@ standalone alert. Pair it with the others or with a size filter.
 ## Rules
 
 Canonical machine-readable copies live in [`sigma/`](../sigma); the copies below are for
-readability. **They must stay identical** — see [CONTRIBUTING](../CONTRIBUTING.md).
+readability. **They must stay identical**. See [CONTRIBUTING](../CONTRIBUTING.md).
 Fixtures: [`tests/fixtures/componenttask33-*.json`](../tests/fixtures).
 
 ### ComponentTask33 MSI Scatter Custom Action (PowerShell -AnchorDir)
@@ -292,10 +292,11 @@ level: low
 ## Network and file-content coverage
 
 Sigma covers endpoint telemetry only. For this family see also
-[`suricata/componenttask33.rules`](../suricata) — 8 PCAP-validated rules covering the C2
-WebSocket upgrade, the panel banner, the remote-script pull, the delivery gate, MSI
-delivery, and on-chain C2 discovery — and [`yara/componenttask33.yar`](../yara) (agent
-source, config descriptor, builder residue).
+[`suricata/componenttask33.rules`](../suricata), which carries 8 PCAP-validated rules
+covering the C2 WebSocket upgrade, the panel banner, the remote-script pull, the delivery
+gate, MSI delivery, and on-chain C2 discovery. Also
+[`yara/componenttask33.yar`](../yara), covering agent source, config descriptor, and
+builder residue.
 
 Two things the capture corrected, worth knowing before you write your own network rules:
 agent→C2 WebSocket **data frames are RFC6455-masked**, so the `register`/`heartbeat` JSON

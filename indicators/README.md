@@ -1,6 +1,6 @@
 # indicators
 
-TLP:CLEAR behavioral and kit-level indicators derived from real cases. Infrastructure IOCs (IPs, domains) are normally released here only once the associated campaign has public vendor attribution; until then they stay in private case files. The one exception is a **first disclosure** of a family nobody has reported yet — see [First-disclosure releases](#first-disclosure-releases) below and the full criteria in [`CONTRIBUTING.md`](../CONTRIBUTING.md#first-disclosure-exception).
+TLP:CLEAR behavioral and kit-level indicators derived from real cases. Infrastructure IOCs (IPs, domains) are normally released here only once the associated campaign has public vendor attribution; until then they stay in private case files. The one exception is a **first disclosure** of a family nobody has reported yet. See [First-disclosure releases](#first-disclosure-releases) below and the full criteria in [`CONTRIBUTING.md`](../CONTRIBUTING.md#first-disclosure-exception).
 
 ## Format
 
@@ -16,7 +16,7 @@ Each CSV has these columns:
 | `confidence` | high / medium / low |
 | `tlp` | Always CLEAR in this folder (public repo) |
 
-Values in the `value` column are **raw, not defanged** — these files are meant to be
+Values in the `value` column are **raw, not defanged**: these files are meant to be
 fed to tooling. Prose everywhere else in this repo defangs (`1.2.3[.]4`, `hxxps://`).
 
 ### Indicator types
@@ -35,7 +35,7 @@ fed to tooling. Prose everywhere else in this repo defangs (`1.2.3[.]4`, `hxxps:
 | `url` | A full URL including scheme and port (first-disclosure releases only) |
 | `contract-address` | Blockchain contract address used for on-chain C2 discovery |
 | `sha256` | SHA-256 file hash |
-| `mvid` | .NET module version id — stable across on-disk filename rotation |
+| `mvid` | .NET module version id, stable across on-disk filename rotation |
 
 ## First-disclosure releases
 
@@ -56,7 +56,7 @@ are called out here:
 - Victim-identifying information of any kind
 - Case IDs or client references
 - Live campaign selectors (per-victim bot IDs, session tokens, single-use delivery
-  tokens) — redacted even in first-disclosure releases
+  tokens), redacted even in first-disclosure releases
 
 ## Attribution basis
 

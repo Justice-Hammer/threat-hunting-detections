@@ -32,7 +32,7 @@ Rules written against the pre-capture assumptions would not have fired at all.
 
 `sid:9100001`-`9100005` and `9100007` are specific to this family and are safe to alert on.
 
-**`sid:9100006` and `sid:9100008` are different.** They are generic EtherHiding analytics —
+**`sid:9100006` and `sid:9100008` are different.** They are generic EtherHiding analytics:
 respectively TLS SNI to a set of known public EVM RPC providers, and cleartext JSON-RPC
 `eth_call` over HTTP. They are the most transferable rules in the set and also the noisiest:
 public RPCs are dual-use and these fire on any host legitimately running crypto tooling.
@@ -43,5 +43,5 @@ The C2 rules assume cleartext WebSocket on TCP/3847, which is what this build us
 TLS-wrapped variant would evade the content matches; TLS SNI or JA4 would be where to
 extend coverage.
 
-The provider list in `sid:9100006` is a starting point, not exhaustive — add the RPC
+The provider list in `sid:9100006` is a starting point, not exhaustive. Add the RPC
 providers you actually see in your environment.
