@@ -54,7 +54,7 @@ Full technique map (including hunt-only techniques like T1573.001 and T1530) is 
 - **Infrastructure reconnaissance** (PBN link injection for C2 domain reputation laundering)
 - **Pig-butchering-as-a-Service (PBaaS)** (Vue.js fake trading platform fingerprints, multi-tenant S3 infrastructure, passive OSINT hunt methodology)
 - **MSI loaders deploying Node.js RATs** (per-user install, payload scattering across AppData decoy directories, agent-registered persistence)
-- **EtherHiding / on-chain C2 discovery** (smart-contract-based C2 resolution that survives domain takedown; includes a generic, family-agnostic hunting analytic)
+- **EtherHiding / on-chain C2 discovery** (smart-contract-based C2 resolution that survives domain takedown; includes a generic, family-agnostic hunting analytic). Observed rotating in the wild on 2026-08-31, which confirmed the panel domain as disposable and the hosting address as the durable indicator
 
 ---
 

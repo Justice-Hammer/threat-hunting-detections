@@ -10,13 +10,20 @@ references:
   - "https://attack.mitre.org/techniques/T1218/007/"
   - "https://attack.mitre.org/techniques/T1564/001/"
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
 tags: [research, msi-loader, nodejs-rat, etherhiding, on-chain-c2, polygon, first-disclosure, componenttask33]
 ---
 
 # ComponentTask33 MSI Loader with On-Chain C2 Discovery
 
 **TLP:CLEAR** · **First observed:** 2026-08-27 (sample MSI built 2026-08-24)
+· **Updated:** 2026-09-02
+
+> [!note] Update 2026-09-02: the C2 rotated
+> On 2026-08-31 the operator used the on-chain rotation capability for the first time,
+> twice in sixteen minutes. The panel domain and port both changed; the hosting address did
+> not. See [C2 rotation, 2026-08-31](#c2-rotation-2026-08-31). Two Suricata rules pinned the
+> original port and have been revised.
 
 An MSI dropper impersonating a Spotify installer deploys a purpose-built Node.js
 agent (`win-agent-client`) that talks WebSocket C2 and resolves its current C2
@@ -86,7 +93,7 @@ network capture.
    - `ProfileQuickHost.exe` (native .NET launcher → node);
    - `ManagerPrivateLoader.cmd` (cmd → PowerShell persistence + VBScript).
 4. **Beacon.** After a 10–30 s jitter: resolve the current C2 (read the Polygon contract →
-   panel URL), open `ws[:]//…:3847`, send a `register` frame, then a heartbeat every
+   panel URL), open `ws[:]//<panel>:<port>`, send a `register` frame, then a heartbeat every
    ~12 minutes.
 
 ## Network indicators
@@ -96,8 +103,11 @@ network capture.
 | `api-configuard[.]com` | domain | Delivery gate | High | Observed |
 | `82.25.63[.]146:80` | IPv4:port | Resolves `api-configuard[.]com` (ASN 207043); serves the MSI over cleartext HTTP | High | **Wire-observed** (2026-08-27) |
 | `/capher.php?token=<30-32 chars>` | URI pattern | Delivery gate, token-gated (serves `ComponentTask33-*.msi`) | High | Observed |
-| `shift-api-control[.]com` | domain | WebSocket C2 panel (Node.js Express) | High | **Wire-observed** |
-| `ws[:]//shift-api-control[.]com:3847` → `176.65.144[.]127` | URL | C2 endpoint | High | **Wire-observed** (2026-08-27) |
+| `shift-api-control[.]com` | domain | WebSocket C2 panel (Node.js Express). **Historical, rotated away 2026-08-31** | High | **Wire-observed** |
+| `ws[:]//shift-api-control[.]com:3847` → `176.65.144[.]127` | URL | C2 endpoint. **Historical** | High | **Wire-observed** (2026-08-27) |
+| `moweros[.]net` → `ws[:]//moweros[.]net:3851` | domain / URL | Second C2 panel. Live roughly sixteen minutes on 2026-08-31 | High | On-chain |
+| `bedotiq[.]net` → `ws[:]//bedotiq[.]net:3854` | domain / URL | Third C2 panel, **current** as of 2026-09-02 | High | On-chain |
+| `176.65.144[.]127` | IPv4 | Resolves every C2 panel domain to date. The durable control point | High | **Wire-observed** + resolved |
 | `0xf9099d0d747368cce8C10226CC9AF2bFD4DDbCF4` | Polygon contract | On-chain C2 discovery | High | Config-derived |
 | chainId `137` | Polygon mainnet | C2 discovery chain | High | Config-derived |
 | `0x0998dc3f7d8518dcb61f40d2874ef8667c680000` | Polygon EOA | Contract deployer and owner | High | On-chain |
@@ -126,6 +136,12 @@ here is latent rather than active. That inverts the usual takedown calculus: rem
 `shift-api-control[.]com` would force the operator's first ever rotation, and because the new
 value lands in public contract state, defenders would see it immediately.
 
+> [!warning] Superseded 2026-08-31
+> The capability is no longer latent. It was exercised on 2026-08-31 without any takedown
+> having taken place. The visibility half of the claim above held exactly as written: the new
+> values were readable from contract state the moment they were written. See
+> [C2 rotation, 2026-08-31](#c2-rotation-2026-08-31).
+
 **The contract was deployed 23 seconds before the installer was built.** Deployment is
 2026-08-24 11:20:09 UTC (block 92576921); the MSI summary-information `Created` timestamp is
 11:20:32 UTC the same day. The ordering is causally right, since the builder needs the contract
@@ -151,15 +167,60 @@ the distinction matters enough that no identity inference should be drawn from i
 **The EOA is the better long-term pivot.** It survives both panel rotation and contract
 replacement, which the contract address does not.
 
+### C2 rotation, 2026-08-31
+
+`setPanelUrl` fired twice on 2026-08-31, sixteen minutes apart. It was the first use of the
+rotation capability since the contract was deployed on 2026-08-24.
+
+| Order | Panel URL | Status |
+|---|---|---|
+| 1 | `ws[:]//shift-api-control[.]com:3847` | Constructor-set. Historical |
+| 2 | `ws[:]//moweros[.]net:3851` | Live roughly sixteen minutes |
+| 3 | `ws[:]//bedotiq[.]net:3854` | Current as of 2026-09-02 |
+
+**The names rotate. The hosting does not.** Every panel domain observed to date resolves to
+`176.65.144[.]127`, inside `176.65.144[.]0/24`. The address is the durable control point, and a
+domain or port block is one contract write away from being worthless. Pivot on the address or
+the prefix rather than on an ASN: the route object for this /24 is held by AS209413, but the
+announcing ASN has rehomed more than once across bulletproof providers, so any ASN you record
+for it should be treated as a point-in-time observation and re-checked. The delivery gate is the exception, and
+stays on `82.25.63[.]146`, so "one address covers everything" is true of the C2 only.
+
+**The replacement names were pre-staged.** `moweros[.]net` and `bedotiq[.]net` were
+batch-registered on 2026-08-24 at roughly 17:31 UTC, four seconds apart, through the same
+registrar and the same name servers, then held unused for seven days. That is a reserve pool
+acquired before the campaign launched, which makes it likely that further unactivated names
+exist in the same batch. Both also publish MX and SPF records pointing at the C2 host, so they
+are mail-capable and represent a delivery lead as well as a C2 lead.
+
+**On the trigger, no claim is made.** This note was published on 2026-08-28 and the rotation
+followed on 2026-08-31. The sequence is consistent with the operator reacting to publication,
+which the first-disclosure callout above anticipated as a cost. It is equally consistent with
+scheduled hygiene, and no takedown occurred that would have forced the change. Nothing in the
+available data separates those hypotheses, so the timing is recorded and left unattributed.
+
+**What rotating cost the operator.** Two names burned from the reserve pool, and three
+permanent, timestamped, publicly readable contract writes describing their own infrastructure
+changes. That is the trade EtherHiding makes. Takedown resistance is bought with a public
+audit log that any defender can read, for free, without ever contacting the adversary.
+
+**What it cost the rules.** `sid:9100001` and `sid:9100002` pinned TCP/3847 and would have
+stopped firing on the rotated infrastructure. Both are revised as of 2026-09-02, and the
+reasoning is in [`suricata/README.md`](../suricata/README.md). The port was an observed
+literal rather than structure, which is the exact failure mode this case's hunt hypothesis
+warned about.
+
 ### Monitoring without touching the adversary
 
 Two checks give zero-contact early warning, because contract state is replicated:
 
-| Check | Method | Baseline (2026-08-29) | Meaning if changed |
+| Check | Method | Current (2026-09-02) | Meaning if changed |
 |---|---|---|---|
-| Panel URL | `eth_call` selector `0x4ab7874e` | `ws://shift-api-control.com:3847` | C2 rotated; the new URL is readable at once |
-| Contract writes | transaction count for the contract | `1` (deployment only) | first ever rotation |
+| Panel URL | `eth_call` selector `0x4ab7874e` | `ws://bedotiq.net:3854` | C2 rotated again; the new URL is readable at once |
+| Contract writes | transaction count for the contract | `3` (deployment + two rotations) | a further rotation |
 | Deployer nonce | `eth_getTransactionCount` | `16` | new deployment, likely a new campaign contract |
+
+Values above are post-rotation. The 2026-08-29 baseline is recorded in the rotation section.
 
 Use an RPC of your own choosing rather than the one the malware uses. A failed read is an
 untested cycle, not a clean one.
@@ -365,7 +426,7 @@ developer tool.
 | C2 | T1071.001 | Application Layer Protocol: Web Protocols (WebSocket) |
 | C2 | T1102 | Web Service (blockchain used for C2 resolution) |
 | C2 | T1008 | Fallback Channels (on-chain C2 discovery) |
-| C2 | T1571 | Non-Standard Port (3847) |
+| C2 | T1571 | Non-Standard Port (3847, 3851, 3854 observed) |
 | Persistence | T1547.001 | Registry Run Key (fallback when task registration fails) |
 | Collection | T1005 | Data from Local System (`files` read/download) |
 | Collection | T1119 | Automated Collection (`wallet_scan` enumeration) |
@@ -396,7 +457,9 @@ developer tool.
   `AGENT_TOOLS` and launches `node.exe` from a *different* AppData leaf than its own.
 - Self-deleting `%TEMP%\wa-kill-*.cmd` running `rd /s /q` against multiple AppData
   leaves (self-destruct), or `%TEMP%\wra-update-*.zip` + `wra-apply-*.ps1` (self-update).
-- Endpoint DNS/flow to `shift-api-control[.]com`, or WebSocket traffic to port 3847.
+- Endpoint DNS/flow to any known C2 panel domain, or WebSocket traffic to ports 3847, 3851
+  or 3854. Prefer flow to `176.65.144[.]127`: panel domains and ports have both rotated,
+  the address has not.
 - Non-crypto endpoints issuing `eth_call` / JSON-RPC to public blockchain RPC
   endpoints, a strong general signal for EtherHiding-style malware regardless of
   this specific family.

@@ -9,12 +9,20 @@
 #    JSON is NOT content-matchable at the network layer. Detect the handshake + the server
 #    banner instead; frame-JSON detection requires a TLS/WS-terminating proxy or host sensor.
 #  - The eth_call RPC is HTTPS (TLS SNI publicnode.com) -> match on TLS SNI, body is encrypted.
+#
+# UPDATED 2026-09-02 after an on-chain C2 rotation on 2026-08-31 (see RES-0007).
+# The operator rotated panel domain AND port twice in sixteen minutes. sid:9100001 and
+# sid:9100002 pinned TCP/3847 and would have stopped firing. Lesson applied here: the
+# port was an observed literal, not structure. 9100001 now runs portless because the
+# X-Agent-Token header on a WebSocket upgrade carries the selectivity on its own.
+# 9100002 keeps a port list because "X-Powered-By: Express" alone is far too common.
+# Every C2 domain so far resolves to the same address, so an IP-based rule outlives both.
 
 # --- C2 WS UPGRADE handshake (plaintext, client->server) — CONFIRMED on wire ---
-alert tcp $HOME_NET any -> $EXTERNAL_NET 3847 (msg:"ComponentTask33 C2 WebSocket upgrade (X-Agent-Token, TCP/3847)"; flow:established,to_server; content:"GET "; depth:4; content:"Upgrade|3a| websocket"; nocase; content:"X-Agent-Token|3a|"; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100001; rev:2;)
+alert tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"ComponentTask33 C2 WebSocket upgrade (X-Agent-Token, any port)"; flow:established,to_server; content:"GET "; depth:4; content:"Upgrade|3a| websocket"; nocase; content:"X-Agent-Token|3a|"; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100001; rev:3;)
 
 # --- C2 panel server banner (server->client, unmasked) — CONFIRMED on wire ---
-alert tcp $EXTERNAL_NET 3847 -> $HOME_NET any (msg:"ComponentTask33 C2 panel banner (Express, Agent port WebSocket only)"; flow:established,to_client; content:"X-Powered-By|3a| Express"; nocase; content:"WebSocket only"; nocase; distance:0; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100002; rev:2;)
+alert tcp $EXTERNAL_NET [3847,3851,3854] -> $HOME_NET any (msg:"ComponentTask33 C2 panel banner (Express, Agent port WebSocket only)"; flow:established,to_client; content:"X-Powered-By|3a| Express"; nocase; content:"WebSocket only"; nocase; distance:0; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100002; rev:3;)
 
 # --- Remote-script pull: X-Agent-Token on GET /api/agent/script — CONFIRMED on wire ---
 alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"ComponentTask33 remote-script fetch (/api/agent/script + X-Agent-Token)"; flow:established,to_server; http.method; content:"GET"; http.uri; content:"/api/agent/script"; http.header; content:"X-Agent-Token|3a|"; nocase; classtype:trojan-activity; reference:url,https://github.com/Justice-Hammer/threat-hunting-detections; sid:9100003; rev:2;)

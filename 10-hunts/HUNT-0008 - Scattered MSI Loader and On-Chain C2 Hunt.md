@@ -13,7 +13,7 @@ produced_detections:
   - "[[DET-0007 - ComponentTask33 Node Agent Execution and Persistence]]"
 related_research: ["[[RES-0007 - ComponentTask33 MSI Loader with On-Chain C2 Discovery]]"]
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
 tags: [hunt, msi-loader, nodejs-rat, etherhiding, on-chain-c2, polygon, scatter, static-analysis, pcap]
 ---
 
@@ -95,6 +95,13 @@ its C2 address solely from a Polygon contract. The contract address and chainId 
 durable, actor-controlled indicators; the panel domain is disposable. This inverts the
 usual takedown calculus and is the most transferable finding in the case.
 
+> [!note] Confirmed in the wild, 2026-08-31
+> The operator rotated the panel twice in sixteen minutes, changing domain and port both
+> times. Every replacement still resolved to the same address, so the hosting address proved
+> more durable than either. Two of this case's Suricata rules had pinned the original port and
+> would have stopped firing. Details in
+> [RES-0007](../30-research/RES-0007%20-%20ComponentTask33%20MSI%20Loader%20with%20On-Chain%20C2%20Discovery.md).
+
 The public RPC endpoint used to read the contract is *not* an indicator. It is
 legitimate, shared infrastructure, and blocking it breaks unrelated tooling.
 
@@ -144,7 +151,7 @@ validating network rules against a capture before publishing them, not after.
 | [[RES-0007 - ComponentTask33 MSI Loader with On-Chain C2 Discovery]] | Full analysis and first-disclosure advisory |
 | `yara/componenttask33.yar` | 4 rules: config descriptor, agent source, builder residue, .NET helpers |
 | `suricata/componenttask33.rules` | 8 PCAP-validated rules, SIDs 9100001-9100008 |
-| `indicators/componenttask33-infra.csv` | 21 indicators |
+| `indicators/componenttask33-infra.csv` | 27 indicators |
 
 The family had **no public vendor reporting and no meaningful detection** at time of
 analysis. A public sandbox scored the MSI 3/100 (clean) with zero YARA, Sigma, or
