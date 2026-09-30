@@ -8,8 +8,7 @@ domain's infrastructure went live and identifying related subdomains.
 
 Usage:
     python3 crtsh-timeline.py <domain>
-    python3 crtsh-timeline.py example-backend.top
-    python3 crtsh-timeline.py --include-expired example-backend.top
+    python3 crtsh-timeline.py --include-expired example.com
 
 Output columns:
     logged_at   — when the cert was submitted to CT logs
@@ -24,6 +23,8 @@ import sys
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
+import argparse
+import urllib.parse
 
 CRTSH_URL = "https://crt.sh/?q={domain}&output=json"
 
@@ -70,19 +71,13 @@ def format_names(name_value: str) -> str:
 
 
 def main():
-    import urllib.parse
+    parser = argparse.ArgumentParser(description= "Process data and optionally export to excel")
+    parser.add_argument("--export", action="store_true", help= "Export data to excel.")
+    parser.add_argument("--include-expired", action="store_true", help= "Include expired certs in output")
+    parser.add_argument("domain", help= "Domain to query.")
+    args = parser.parse_args()
 
-    include_expired = False
-    args = [a for a in sys.argv[1:] if not a.startswith("-")]
-    flags = [a for a in sys.argv[1:] if a.startswith("-")]
-    if "--include-expired" in flags:
-        include_expired = True
-
-    if not args:
-        print(__doc__)
-        sys.exit(0)
-
-    domain = args[0].lstrip("*.")
+    domain = args.domain.lstrip("*.")
     print(f"[*] querying crt.sh for: {domain}", file=sys.stderr)
 
     certs = fetch_certs(domain)
@@ -93,7 +88,7 @@ def main():
     certs = deduplicate(certs)
     now = datetime.now(timezone.utc)
 
-    if not include_expired:
+    if not args.include_expired:
         certs = [c for c in certs if parse_dt(c.get("not_after", "")) > now]
 
     certs.sort(key=lambda c: parse_dt(c.get("not_before", "")))
