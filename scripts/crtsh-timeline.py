@@ -9,6 +9,7 @@ domain's infrastructure went live and identifying related subdomains.
 Usage:
     python3 crtsh-timeline.py <domain>
     python3 crtsh-timeline.py --include-expired example.com
+    python3 crtsh-timeline.py --export example.com
 
 Output columns:
     logged_at   — when the cert was submitted to CT logs
@@ -25,22 +26,32 @@ import urllib.error
 from datetime import datetime, timezone
 import argparse
 import urllib.parse
+import time
+import pandas as pd
 
 CRTSH_URL = "https://crt.sh/?q={domain}&output=json"
 
 
-def fetch_certs(domain: str) -> list[dict]:
+def fetch_certs(domain: str, retries: int = 4) -> list[dict]:
     url = CRTSH_URL.format(domain=urllib.parse.quote(domain))
     req = urllib.request.Request(url, headers={"User-Agent": "crtsh-timeline/1.0"})
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            return json.loads(resp.read().decode())
-    except urllib.error.HTTPError as e:
-        print(f"[error] crt.sh returned HTTP {e.code}", file=sys.stderr)
-        sys.exit(1)
-    except Exception as e:
-        print(f"[error] {e}", file=sys.stderr)
-        sys.exit(1)
+    for attempt in range(1, retries + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code not in (502, 503, 504) or attempt == retries:
+                print(f"[error] crt.sh returned HTTP {e.code}", file=sys.stderr)
+                sys.exit(1)
+            err = f"HTTP {e.code}"
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt == retries:
+                print(f"[error] {e}", file=sys.stderr)
+                sys.exit(1)
+            err = str(e)
+        wait = 5 * attempt
+        print(f"[!] {err}, retrying in {wait}s ({attempt}/{retries})", file=sys.stderr)
+        time.sleep(wait)
 
 
 def parse_dt(s: str) -> datetime:
@@ -93,18 +104,30 @@ def main():
 
     certs.sort(key=lambda c: parse_dt(c.get("not_before", "")))
 
+    rows = []
+    for c in certs:
+        rows.append({
+            "logged_at":  (c.get("entry_timestamp") or "n/a")[:19],
+            "not_before": c.get("not_before", "")[:19],
+            "not_after":  c.get("not_after", "")[:19],
+            "issuer":     c.get("issuer_name", "").split("O=")[-1].split(",")[0][:38],
+            "names":      format_names(c.get("name_value", c.get("common_name", ""))),
+        })
+
     print(f"\n{'logged_at':<22} {'not_before':<22} {'not_after':<22} {'issuer':<40} names")
     print("-" * 140)
+    for r in rows:
+        print(f"{r['logged_at']:<22} {r['not_before']:<22} {r['not_after']:<22} {r['issuer']:<40} {r['names']}")
 
-    for c in certs:
-        logged = c.get("entry_timestamp", "")[:19]
-        not_before = c.get("not_before", "")[:19]
-        not_after = c.get("not_after", "")[:19]
-        issuer = c.get("issuer_name", "").split("O=")[-1].split(",")[0][:38]
-        names = format_names(c.get("name_value", c.get("common_name", "")))
-        print(f"{logged:<22} {not_before:<22} {not_after:<22} {issuer:<40} {names}")
+    print(f"\n[*] {len(rows)} certificate(s) shown", file=sys.stderr)
 
-    print(f"\n[*] {len(certs)} certificate(s) shown", file=sys.stderr)
+    if args.export:
+        df = pd.DataFrame(rows)
+        filename = f"crtsh_{domain}.xlsx"
+        df.to_excel(filename, sheet_name="Certs", index=False)
+        print(f"[*] exported to {filename}", file=sys.stderr)
+    else:
+        print("[*] tip: re-run with --export to save to Excel", file=sys.stderr)
 
 
 if __name__ == "__main__":
